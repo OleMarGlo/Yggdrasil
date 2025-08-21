@@ -1,12 +1,11 @@
 use axum::{
-    routing::get,
-    Router,
-    response::Json,
+    extract::Path, response::Json, routing::get, Router
 };
-
 use serde::Serialize;
-use std::net::SocketAddr;
 
+use std::net::{SocketAddr, TcpListener};
+
+#[derive(Serialize)]
 struct Post {
     id: u32,
     title: String,
@@ -22,12 +21,10 @@ async fn get_posts() -> Json<Vec<Post>> {
 }
 
 #[tokio::main]
-fn main() {
+async fn main() {
     let app = Router::new()
-        .route("/posts", get(get_posts()));
+        .route("/posts", get(get_posts));
     
-    let addr = SocketAddr::from(([127,0,0,1], 3000));
-    println!("Server running at http://{}", addr);
-    
-    let listener = tokio::net::TcpListener::bind()
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }
