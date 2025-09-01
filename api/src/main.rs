@@ -3,6 +3,8 @@ use axum::{
 };
 use serde::Serialize;
 
+mod handlers;
+
 #[derive(Serialize)]
 struct Post {
     id: u32,
