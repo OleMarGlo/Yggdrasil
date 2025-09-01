@@ -1,18 +1,10 @@
-# Stage 1: Build
-FROM rust:latest AS builder
-
-RUN rustup target add x86_64-unknown-linux-musl
+FROM rust:slim AS builder
+RUN apt-get update && apt-get install -y libssl-dev libpq-dev pkg-config
 
 WORKDIR /api
 COPY . .
-RUN cargo build --release --target x86_64-unknown-linux-musl
+RUN cargo build --release
 
-# Stage 2: Runtime
-FROM debian:bullseye-slim
-
-RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
-
-COPY --from=builder /api/target/x86_64-unknown-linux-musl/release/api /usr/local/bin/api
-
-EXPOSE 8080
-CMD ["api"]
+FROM gcr.io/distroless/cc
+COPY --from=builder /api/target/release/api /usr/local/bin/api
+CMD ["/usr/local/bin/api"]

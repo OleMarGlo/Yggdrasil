@@ -1,29 +1,35 @@
+use std::env;
+
 use axum::{
-    response::Json, routing::get, Router
+    routing::get, Router
 };
-use serde::Serialize;
+use serde::Deserialize;
+
+use crate::handlers::posts::get_posts;
 
 mod handlers;
+mod db;
 
-#[derive(Serialize)]
-struct Post {
-    id: u32,
-    title: String,
-    content: String,
-}
-
-async fn get_posts() -> Json<Vec<Post>> {
-    let posts = vec![
-        Post { id: 1, title: "Hello World".into(), content: "This is my first post".into()},
-        Post { id: 2, title: "Hello World again".into(), content: "This is my second post".into()},
-    ];
-    Json(posts)
+#[derive(Deserialize)]
+struct Config {
+    database_url: String,
+    port: String
 }
 
 #[tokio::main]
 async fn main() {
+    let url = format!(
+        "postgres://{}:{}@{}:{}/{}",
+        env::var("POSTGRES_USER").unwrap(),
+        env::var("POSTGRES_PASSWORD").unwrap(),
+        env::var("POSTGRES_HOST").unwrap(),
+        env::var("POSTGRES_PORT").unwrap(),
+        env::var("POSTGRES_DB").unwrap()
+    );
+    println!("{}", url);
+
     let app = Router::new()
-        .route("/posts", get(get_posts));
+        .route("/root", get(get_posts));
     
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
     axum::serve(listener, app).await.unwrap();
