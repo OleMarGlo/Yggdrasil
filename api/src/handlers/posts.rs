@@ -11,6 +11,7 @@ pub struct Post {
 
 
 pub async fn get_posts() -> Json<Vec<Post>> {
+    
     let posts = vec![
         Post {id:1,title:"Hello".to_string(), content: "Monkey".to_string() },
         Post { id: 2, title: "Foo".to_string(), content: "Bar".to_string() },

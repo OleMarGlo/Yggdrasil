@@ -2,10 +2,14 @@ version: "3.9"
 
 services:
   api:
+    depends_on:
+      - db
     build: ./api
     ports:
-      - "8080:8080"
+      - "8080:${API_PORT}"
     restart: unless-stopped
+    env_file:
+      - .env
 
   db:
     build: ./db
@@ -17,7 +21,11 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5432:${POSTGRES_PORT}"
+    env_file:
+      - .env
+
+
 
 volumes:
   db_data:
