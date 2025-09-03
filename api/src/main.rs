@@ -2,16 +2,14 @@ mod handlers;
 mod db;
 mod router;
 mod consts;
+mod models;
 
 use std::{env, sync::Arc};
 
-use axum::{
-    routing::get, Extension, Router
-};
 use serde::Deserialize;
 use sqlx::PgPool;
 
-use crate::{handlers::posts::get_posts, router::create_router};
+use crate::{router::create_router};
 
 #[derive(Deserialize)]
 struct Config {
@@ -19,7 +17,7 @@ struct Config {
     port: String
 }
 
-pub struct State {
+pub struct AppState {
     db: PgPool,
 }
 
@@ -51,7 +49,7 @@ async fn main() {
         
 
 
-    let app = create_router(Arc::new(State { db: pool.clone() }));
+    let app = create_router(Arc::new(AppState { db: pool.clone() }));
     
     let address: String = "0.0.0.0:".to_string() + &config.port.to_owned();
 
