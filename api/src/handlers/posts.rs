@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{extract::{Query, State}, http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::{Query, State}, http::{Method, StatusCode}, response::IntoResponse, Json};
 
 use crate::{db::queries::fetch_posts, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
@@ -16,7 +16,7 @@ fn to_post_response(post: &PostModel) ->  PostModelResponse {
     }
 }
 
-pub async fn posts_handler(
+pub async fn get_posts(
     Query(opts): Query<FilterOptions>,
     State(data): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
