@@ -8,7 +8,6 @@ use std::sync::Arc;
 
 use serde::Deserialize;
 use sqlx::PgPool;
-use tracing_subscriber::EnvFilter;
 
 use crate::{db::connection::connect_to_database, router::create_router};
 

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use axum::{extract::{Query, State}, http::{Method, StatusCode}, response::IntoResponse, Json};
+use axum::{extract::{Query, State}, http::StatusCode, response::IntoResponse, Json};
 
 use crate::{db::queries::fetch_posts, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};

@@ -1,6 +1,6 @@
 use std::{sync::Arc};
 
-use axum::http::{request, Method, Request};
+use axum::http::Method;
 use axum::routing::{get};
 use axum::Router;
 use tower::ServiceBuilder;
