@@ -1,4 +1,4 @@
-# Ygdrasil
+# Yggdrasil
 Portfolio website i am working on
 ## Description
 A portfolio website made to track my intrests, hobbies, and projects i am working on. 
