@@ -4,10 +4,11 @@ mod router;
 mod consts;
 mod models;
 
-use std::{env, sync::Arc};
+use std::sync::Arc;
 
 use serde::Deserialize;
 use sqlx::PgPool;
+use tracing_subscriber::EnvFilter;
 
 use crate::{db::connection::connect_to_database, router::create_router};
 
@@ -23,6 +24,14 @@ pub struct AppState {
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::fmt()
+        .with_env_filter("info,tower_http=info")
+        .with_writer(std::io::stdout)
+        .with_ansi(false)
+        .init();
+    
+    tracing::info!("Server initialized, ready to accept requests");
+
     let config = connect_to_database();
     let pool = match PgPool::connect(&config.database_url)
         .await
@@ -40,9 +49,12 @@ async fn main() {
     
     let address: String = "0.0.0.0:".to_string() + &config.port.to_owned();
 
-    tracing_subscriber::fmt::init();
-
     println!("Starting server at port {}", address);
-    let listener = tokio::net::TcpListener::bind(address).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    let listener = tokio::net::TcpListener::bind(address)
+        .await
+        .unwrap();
+    
+    axum::serve(listener, app)
+        .await
+        .unwrap();
 }

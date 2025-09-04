@@ -1,16 +1,14 @@
 use std::{sync::Arc};
 
-use axum::http::Method;
+use axum::http::{request, Method, Request};
 use axum::routing::{get};
 use axum::Router;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
-use tower_http::trace::TraceLayer;
+use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
 
 use crate::handlers::posts::get_posts;
 use crate::{consts, AppState};
-
-
 
 pub fn create_router(app_state: Arc<AppState>) -> Router {
     let cors = CorsLayer::new()
@@ -21,9 +19,13 @@ pub fn create_router(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route(&format!("/api/{}/posts", consts::VERSION), get(get_posts))
         .with_state(app_state)
-        .layer(
+        .layer (
             ServiceBuilder::new()
-                .layer(TraceLayer::new_for_http())
-                .layer(cors)
+                .layer(
+                    TraceLayer::new_for_http()
+                        .make_span_with(DefaultMakeSpan::new().level(tracing::Level::INFO))
+                        .on_response(DefaultOnResponse::new().level(tracing::Level::INFO))
+                )           
+                .layer(cors)        
         )
 }
