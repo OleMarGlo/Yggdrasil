@@ -29,3 +29,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO posts (id, title, slug, content, category_id) VALUES
     (1, 'Hello World', 'hello-world', 'Hello world!', 1)
 ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO posts (id, title, slug, content, category_id) VALUES
+    (2, 'Hello World 2', 'hello-world', 'Hello world!', 2)
+ON CONFLICT (id) DO NOTHING;
