@@ -1,1 +1,1 @@
-pub const VERSION: &str = "v1";
+pub const VERSION: &str = "/api/v1";

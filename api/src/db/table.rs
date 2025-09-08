@@ -9,3 +9,10 @@ pub fn fetch_sql(table: Table) -> &'static str {
         Table::Categories => "SELECT * FROM comments ORDER BY id LIMIT $1 OFFSET $2",
     }
 }
+
+pub fn fetch_one_post(table: Table) -> &'static str {
+    match table {
+        Table::Posts => "SELECT * FROM posts WHERE id=$1",
+        _ => "unimplemented"
+    }
+}

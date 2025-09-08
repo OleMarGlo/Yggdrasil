@@ -1,8 +1,10 @@
 use std::sync::Arc;
 
-use axum::{extract::{Query, State}, http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
+use chrono::serde;
+use serde_json::json;
 
-use crate::{db::queries::fetch_posts, AppState};
+use crate::{db::{queries::{fetch_post, fetch_posts}, table::fetch_one_post}, handlers::posts, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 fn to_post_response(post: &PostModel) ->  PostModelResponse {
@@ -45,4 +47,27 @@ pub async fn get_posts(
     });
 
     Ok(Json(json_response))
+}
+
+pub async fn get_post(
+    State(data): State<Arc<AppState>>,
+    Path(id): Path<String>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let post = fetch_post(&data.db, &id)
+        .await
+        .map_err(|err| {
+            let errpr_response = serde_json::json!({
+                "status": "error",
+                "message": format!("unable to fetch id, err: {}", err),
+            });
+            (StatusCode::BAD_REQUEST, Json(errpr_response))
+        })?;
+
+        let post_response = to_post_response(&post);
+
+        let json_response = json!({
+            "status": "ok",
+            "post": post_response
+        });
+        Ok(Json(json_response))
 }
