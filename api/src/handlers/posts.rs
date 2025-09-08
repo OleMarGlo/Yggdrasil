@@ -2,8 +2,9 @@ use std::sync::Arc;
 
 use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
+use sqlx::PgPool;
 
-use crate::{db::{queries::{fetch_post, fetch_posts}, table::fetch_one_post}, handlers::posts, AppState};
+use crate::{db::{queries::{create_post, fetch_post, fetch_posts}, table::fetch_one_post}, handlers::posts, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 
@@ -73,4 +74,33 @@ pub async fn get_post(
             "post": post_response
         });
         Ok(Json(json_response))
+}
+
+pub async fn post_posts(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CreatePostSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = match get_highest_id(&data.db).await {
+        Ok(Some(highest_id)) => highest_id + 1,
+        Ok(None) => 1,
+        Err(_) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+                "error": "unable to query DB"
+            }))));
+        }
+    };
+    
+    match create_post(&data.db, sqlx::types::Json(body), id).await {
+        Ok(_) => Ok((StatusCode::CREATED, Json(serde_json::json!({"message": "Post created successfully"})))),
+        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+            "error": "unable to create post"
+        })))),
+    }
+}
+
+async fn get_highest_id(pool: &PgPool) -> Result<Option<i32>, sqlx::Error> {
+    let row: (i32,) = sqlx::query_as("SELECT MAX(id) FROM posts")
+        .fetch_one(pool)
+        .await?;
+    Ok(Some(row.0))
 }
