@@ -1,12 +1,13 @@
 use std::sync::Arc;
 
 use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
-use chrono::serde;
 use serde_json::json;
 
 use crate::{db::{queries::{fetch_post, fetch_posts}, table::fetch_one_post}, handlers::posts, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
+
+// used to map from a PostModel in DB to a response
 fn to_post_response(post: &PostModel) ->  PostModelResponse {
     PostModelResponse { 
         id: (post.id), 
@@ -18,13 +19,15 @@ fn to_post_response(post: &PostModel) ->  PostModelResponse {
     }
 }
 
+// fetches all posts in DB
 pub async fn get_posts(
     Query(opts): Query<FilterOptions>,
     State(data): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let limit = opts.limit.unwrap_or(10);
-    let offset = (opts.page.unwrap_or(1) - 1) * limit;
+    let limit = opts.limit.unwrap_or(10);       //limit the amount fetched
+    let offset = (opts.page.unwrap_or(1) - 1) * limit;          //used for paging
 
+    // fetches posts from DB
     let posts = fetch_posts(&data.db, limit as i32, offset as i32)
         .await
         .map_err(|err| {

@@ -3,6 +3,7 @@ mod db;
 mod router;
 mod consts;
 mod models;
+mod functions;
 
 use std::sync::Arc;
 
