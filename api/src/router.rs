@@ -17,7 +17,10 @@ pub fn create_router(app_state: Arc<AppState>) -> Router {
 
 
     Router::new()
-        .route(&format!("{}/posts", consts::VERSION), get(get_posts).post(post_posts))
+        .route(
+            &format!("{}/posts", consts::VERSION),
+             get(get_posts)
+            .post(post_posts))
         .route(&format!("{}/posts/{{id}}", consts::VERSION), get(get_post))
         .with_state(app_state)
         .layer (
@@ -26,7 +29,7 @@ pub fn create_router(app_state: Arc<AppState>) -> Router {
                     TraceLayer::new_for_http()
                         .make_span_with(DefaultMakeSpan::new().level(tracing::Level::INFO))
                         .on_response(DefaultOnResponse::new().level(tracing::Level::INFO))
-                )           
+                )       
                 .layer(cors)        
         )
 }
