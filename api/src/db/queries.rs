@@ -31,14 +31,13 @@ pub async fn create_post(
     id: i32
 ) -> Result<StatusCode, sqlx::Error> {
     let sql = add_one_post(Table::Posts);
-    let category_id: i32 = body.category;
     // Execute the query and handle the result
     match sqlx::query(sql)
         .bind(&id)
         .bind(&body.title)
         .bind(&body.slug)
         .bind(&body.content)
-        .bind(category_id)
+        .bind(&body.category)
         .execute(pool)
         .await {
             Ok(_) => Ok(StatusCode::CREATED),

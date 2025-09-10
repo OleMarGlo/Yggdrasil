@@ -1,7 +1,7 @@
 -- Create categories first
 CREATE TABLE IF NOT EXISTS categories (
     id          INTEGER PRIMARY KEY,
-    categorie   VARCHAR(255) NOT NULL,
+    category   VARCHAR(255) NOT NULL,
     slug        VARCHAR(255) NOT NULL,
     description TEXT NOT NULL
 );
@@ -18,11 +18,11 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 -- Seed
-INSERT INTO categories (id, categorie, slug, description) VALUES
+INSERT INTO categories (id, category, slug, description) VALUES
     (1, 'Programming', 'programming', 'Projects i am either working on or want to work on')
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO categories (id, categorie, slug, description) VALUES
+INSERT INTO categories (id, category, slug, description) VALUES
     (2, 'Personal', 'personal', 'Personal blogs about me, my life, hobbies, etc')
 ON CONFLICT (id) DO NOTHING;
 

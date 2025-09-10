@@ -15,6 +15,7 @@ fn to_post_response(post: &PostModel) ->  PostModelResponse {
         title: (post.title.to_owned()), 
         slug: (post.slug.to_owned()), 
         content: (post.content.to_owned()), 
+        category: (post.category.to_owned()),
         created_at: (post.created_at), 
         updated_at: (post.updated_at) 
     }

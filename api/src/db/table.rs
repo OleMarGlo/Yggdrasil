@@ -5,8 +5,20 @@ pub enum Table {
 
 pub fn fetch_sql(table: Table) -> &'static str {
     match table {
-        Table::Posts => "SELECT * FROM posts ORDER BY id LIMIT $1 OFFSET $2",
-        Table::Categories => "SELECT * FROM comments ORDER BY id LIMIT $1 OFFSET $2",
+        Table::Posts => 
+        r#"SELECT 
+            posts.id, posts.title, posts.slug, 
+            posts.content, posts.created_at, posts.updated_at,
+            categories.category as category
+        FROM 
+            posts
+        JOIN
+            categories
+        ON
+            posts.category_id = categories.id
+        ORDER BY posts.id 
+        LIMIT $1 OFFSET $2;"#,
+        Table::Categories => "SELECT * FROM categories ORDER BY id LIMIT $1 OFFSET $2",
     }
 }
 
