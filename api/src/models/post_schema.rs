@@ -12,7 +12,9 @@ pub struct PostSchema {
     pub content: String,
 }
 
+
 #[derive(Deserialize, Serialize)]
+#[serde(deny_unknown_fields)]
 pub struct CreatePostSchema {
     pub title: String,
     pub slug: String,

@@ -3,7 +3,7 @@ pub enum Table {
     Categories,
 }
 
-pub fn fetch_sql(table: Table) -> &'static str {
+pub fn fetch_all(table: Table) -> &'static str {
     match table {
         Table::Posts => 
         r#"SELECT 
@@ -22,7 +22,7 @@ pub fn fetch_sql(table: Table) -> &'static str {
     }
 }
 
-pub fn fetch_one_post(table: Table) -> &'static str {
+pub fn fetch_one_row(table: Table) -> &'static str {
     match table {
         Table::Posts => r#"
         SELECT 
@@ -36,11 +36,34 @@ pub fn fetch_one_post(table: Table) -> &'static str {
     }
 }
 
-pub fn add_one_post(table: Table) -> &'static str {
+pub fn add_one_row(table: Table) -> &'static str {
     match table {
         Table::Posts => r#"
             INSERT INTO posts(id, title, slug, content, category_id) 
             VALUES ($1, $2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
+        _ => unimplemented!("Unimplemented"),
+    }
+}
+
+pub fn delete_row(table: Table) -> &'static str {
+    match table {
+        Table::Posts => r#"
+            WITH deleted_post AS (
+                DELETE FROM posts
+                WHERE id = $1
+                RETURNING *
+            )
+            SELECT
+                dp.id,
+                dp.title,
+                dp.slug,
+                dp.content,
+                dp.updated_at,
+                dp.created_at,
+                c.category as category
+            FROM deleted_post dp
+            JOIN categories c ON dp.category_id = c.id;
+        "#,
         _ => unimplemented!("Unimplemented"),
     }
 }

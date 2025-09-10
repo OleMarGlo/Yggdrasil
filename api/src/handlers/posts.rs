@@ -4,7 +4,7 @@ use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoRespon
 use serde_json::json;
 use sqlx::PgPool;
 
-use crate::{db::{queries::{create_post, fetch_post, fetch_posts}, table::fetch_one_post}, handlers::posts, models::post_schema::CreatePostSchema, AppState};
+use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts}, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 
@@ -99,9 +99,46 @@ pub async fn post_posts(
     }
 }
 
+pub async fn delete_post(
+    State(data): State<Arc<AppState>>,
+    Path(id_string): Path<String>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id(&id_string)?;
+    let post = delete_post_sql(&data.db, id)
+        .await
+        .map_err(|err| {
+            let errpr_response = serde_json::json!({
+                "status": "error",
+                "message": format!("unable to delete id, err: {}", err),
+            });
+            (StatusCode::BAD_REQUEST, Json(errpr_response))
+        })?;
+
+        let post_response = to_post_response(&post);
+
+        let json_response = json!({
+            "status": "ok",
+            "post": post_response
+        });
+        Ok(Json(json_response))
+}
+
 async fn get_highest_id(pool: &PgPool) -> Result<Option<i32>, sqlx::Error> {
     let row: (i32,) = sqlx::query_as("SELECT MAX(id) FROM posts")
         .fetch_one(pool)
         .await?;
     Ok(Some(row.0))
+}
+
+fn parse_id(id_string: &String) 
+-> Result<i32, (StatusCode, Json<serde_json::Value>)> {
+    match id_string.parse::<i32>() {
+        Ok(num) => Ok(num),
+        Err(_) => Err((
+            StatusCode::BAD_REQUEST, 
+            Json(serde_json::json!({
+            "error": "unable to parse id, not an int"
+            })
+        ))),
+    }
 }
