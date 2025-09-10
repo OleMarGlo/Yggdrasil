@@ -24,14 +24,23 @@ pub fn fetch_sql(table: Table) -> &'static str {
 
 pub fn fetch_one_post(table: Table) -> &'static str {
     match table {
-        Table::Posts => "SELECT * FROM posts WHERE id=$1",
+        Table::Posts => r#"
+        SELECT 
+            posts.id, posts.title, posts.slug, 
+            posts.content, posts.created_at, posts.updated_at,
+            categories.category as category
+        FROM posts
+        JOIN categories ON posts.category_id = categories.id
+        WHERE posts.id=$1;"#,
         _ => unimplemented!("Unimplemented")
     }
 }
 
 pub fn add_one_post(table: Table) -> &'static str {
     match table {
-        Table::Posts => "INSERT INTO posts(id, title, slug, content, category_id) VALUES ($1, $2, $3, $4, $5)",
+        Table::Posts => r#"
+            INSERT INTO posts(id, title, slug, content, category_id) 
+            VALUES ($1, $2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
         _ => unimplemented!("Unimplemented"),
     }
 }

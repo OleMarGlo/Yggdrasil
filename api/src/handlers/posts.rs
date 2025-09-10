@@ -93,7 +93,7 @@ pub async fn post_posts(
     
     match create_post(&data.db, sqlx::types::Json(body), id).await {
         Ok(_) => Ok((StatusCode::CREATED, Json(serde_json::json!({"message": "Post created successfully"})))),
-        Err(_) => Err((StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+        Err(_) => Err((StatusCode::BAD_REQUEST, Json(serde_json::json!({
             "error": "unable to create post"
         })))),
     }
