@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS posts (
     content     TEXT NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    category_id INTEGER NOT NULL REFERENCES categories(id)
+    category_id INTEGER NOT NULL REFERENCES categories(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 -- Seed

@@ -7,6 +7,8 @@ use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
 
+use crate::consts::VERSION;
+use crate::handlers::categories::get_categories;
 use crate::handlers::posts::{delete_post, get_post, get_posts, post_posts};
 use crate::{consts, AppState};
 
@@ -24,6 +26,7 @@ pub fn create_router(app_state: Arc<AppState>) -> Router {
         .route(&format!("{}/posts/{{id}}", consts::VERSION), 
         get(get_post)
         .delete(delete_post))
+        .route(&format!("{}/categories", consts::VERSION),get(get_categories))
         .with_state(app_state)
         .layer (
             ServiceBuilder::new()

@@ -18,7 +18,7 @@ pub fn fetch_all(table: Table) -> &'static str {
             posts.category_id = categories.id
         ORDER BY posts.id 
         LIMIT $1 OFFSET $2;"#,
-        Table::Categories => "SELECT * FROM categories ORDER BY id LIMIT $1 OFFSET $2",
+        Table::Categories => "SELECT * FROM categories ORDER BY id",
     }
 }
 
@@ -32,7 +32,7 @@ pub fn fetch_one_row(table: Table) -> &'static str {
         FROM posts
         JOIN categories ON posts.category_id = categories.id
         WHERE posts.id=$1;"#,
-        _ => unimplemented!("Unimplemented")
+        Table::Categories => "SELECT * FROM categories WHERE id=$1",
     }
 }
 
@@ -41,7 +41,10 @@ pub fn add_one_row(table: Table) -> &'static str {
         Table::Posts => r#"
             INSERT INTO posts(id, title, slug, content, category_id) 
             VALUES ($1, $2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
-        _ => unimplemented!("Unimplemented"),
+        Table::Categories => r#"
+            INSERT INTO categories(id, category, slug, description)
+            VALUES ($1, $2, $3, $4)
+        "#,
     }
 }
 
@@ -64,6 +67,10 @@ pub fn delete_row(table: Table) -> &'static str {
             FROM deleted_post dp
             JOIN categories c ON dp.category_id = c.id;
         "#,
-        _ => unimplemented!("Unimplemented"),
+        Table::Categories => r#"
+            DELETE FROM categories
+            WHERE id=$1
+            RETURNING *
+        "#,
     }
 }

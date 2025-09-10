@@ -7,13 +7,6 @@ pub struct FilterOptions {
 }
 
 #[derive(Deserialize, Serialize)]
-pub struct PostSchema {
-    pub title: String,
-    pub content: String,
-}
-
-
-#[derive(Deserialize, Serialize)]
 #[serde(deny_unknown_fields)]
 pub struct CreatePostSchema {
     pub title: String,
