@@ -74,3 +74,18 @@ pub fn delete_row(table: Table) -> &'static str {
         "#,
     }
 }
+
+pub fn get_posts_with_categorie(table: Table) -> &'static str {
+    match table {
+        Table::Posts => r#"
+            SELECT 
+                posts.id, posts.title, posts.slug, 
+                posts.content, posts.created_at, posts.updated_at,
+                categories.category as category
+            FROM posts
+            JOIN categories ON posts.category_id = categories.id
+            WHERE categories.id=$1;
+        "#,
+        _ => unimplemented!("Unimplemented"),
+    }
+}

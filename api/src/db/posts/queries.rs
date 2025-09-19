@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, Table}, functions::parse_id, models::{post_schema::CreatePostSchema, posts::PostModel}};
+use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, get_posts_with_categorie, Table}, functions::parse_id, models::{post_schema::CreatePostSchema, posts::PostModel}};
 
 // executes an SQL query based on filtering and paging
 pub async fn fetch_posts(pool: &PgPool, limit: i32, offset: i32) 
@@ -56,5 +56,17 @@ pub async fn delete_post_sql(
     sqlx::query_as::<_, PostModel>(sql)
         .bind(id)
         .fetch_one(pool)
+        .await
+}
+
+pub async fn get_posts_in_categies_sql(
+    pool: &PgPool,
+    id: i32
+) -> Result<Vec<PostModel>, sqlx::Error> {
+    let sql = get_posts_with_categorie(Table::Posts);
+
+    sqlx::query_as::<_, PostModel>(sql)
+        .bind(id)
+        .fetch_all(pool)
         .await
 }

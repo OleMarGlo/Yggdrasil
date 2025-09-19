@@ -4,7 +4,7 @@ use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoRespon
 use serde_json::json;
 use sqlx::PgPool;
 
-use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts}, models::post_schema::CreatePostSchema, AppState};
+use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 
@@ -60,12 +60,12 @@ pub async fn get_post(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let post = fetch_post(&data.db, &id)
         .await
-        .map_err(|err| {
-            let errpr_response = serde_json::json!({
+        .map_err(|_| {
+            let error_response = serde_json::json!({
                 "status": "error",
-                "message": format!("unable to fetch id, err: {}", err),
+                "message": "unable to find id"
             });
-            (StatusCode::BAD_REQUEST, Json(errpr_response))
+            (StatusCode::BAD_REQUEST, Json(error_response))
         })?;
 
         let post_response = to_post_response(&post);
@@ -97,6 +97,42 @@ pub async fn post_posts(
             "error": "unable to create post"
         })))),
     }
+}
+
+pub async fn get_posts_in_categorie(
+    State(data): State<Arc<AppState>>,
+    Path(id_string): Path<String>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id(&id_string)?;
+    let posts = get_posts_in_categies_sql(&data.db, id)
+        .await
+        .map_err(|err| {
+            let error_response = serde_json::json!({
+                "status": "error",
+                "message": format!("unable to load posts from db, err: {}", err),
+            });
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+        })?;
+
+    if posts.is_empty() {
+        let error_response = serde_json::json!({
+            "status": "error",
+            "message": "no posts found in this category",
+        });
+        return Err((StatusCode::NOT_FOUND, Json(error_response)));
+    }
+
+    let post_responses = posts
+        .into_iter()
+        .map(|post: PostModel| to_post_response(&post))
+        .collect::<Vec<PostModelResponse>>();
+
+    let json_response = json!({
+        "status": "ok",
+        "count": post_responses.len(),
+        "posts": post_responses,
+    });
+    Ok(Json(json_response))
 }
 
 pub async fn delete_post(

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{extract::{Path, State}, http::StatusCode, response::IntoResponse, Json};
 
-use crate::{db::{categories::queries::{fetch_categories, fetch_one_categorie}, posts, table::fetch_one_row}, models::categories::{CategorieModel, CategorieModelResponse}, AppState};
+use crate::{db::{categories::queries::{fetch_categories, fetch_one_categorie}}, models::categories::{CategorieModel, CategorieModelResponse}, AppState};
 
 fn to_category_response(cat: &CategorieModel) -> CategorieModelResponse {
     CategorieModelResponse { 
