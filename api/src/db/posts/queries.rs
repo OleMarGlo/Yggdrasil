@@ -1,7 +1,7 @@
 use axum::http::StatusCode;
 use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, get_posts_with_categorie, Table}, functions::parse_id, models::{post_schema::CreatePostSchema, posts::PostModel}};
+use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, get_posts_with_categorie, Table}, models::{post_schema::CreatePostSchema, posts::PostModel}};
 
 // executes an SQL query based on filtering and paging
 pub async fn fetch_posts(pool: &PgPool, limit: i32, offset: i32) 
@@ -16,9 +16,8 @@ pub async fn fetch_posts(pool: &PgPool, limit: i32, offset: i32)
 }
 
 // executes an SQL query based on an ID
-pub async fn fetch_post(pool: &PgPool, id_str: &str) 
+pub async fn fetch_post(pool: &PgPool, id: i32) 
 -> Result<PostModel, sqlx::Error> {
-    let id = parse_id(id_str)?;
     let sql = fetch_one_row(Table::Posts);
 
     sqlx::query_as::<_, PostModel>(sql)
@@ -30,12 +29,10 @@ pub async fn fetch_post(pool: &PgPool, id_str: &str)
 pub async fn create_post(
     pool: &PgPool, 
     body: Json<CreatePostSchema>, 
-    id: i32
 ) -> Result<StatusCode, sqlx::Error> {
     let sql = add_one_row(Table::Posts);
     // Execute the query and handle the result
     match sqlx::query(sql)
-        .bind(&id)
         .bind(&body.title)
         .bind(&body.slug)
         .bind(&body.content)

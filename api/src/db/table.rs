@@ -39,8 +39,8 @@ pub fn fetch_one_row(table: Table) -> &'static str {
 pub fn add_one_row(table: Table) -> &'static str {
     match table {
         Table::Posts => r#"
-            INSERT INTO posts(id, title, slug, content, category_id) 
-            VALUES ($1, $2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
+            INSERT INTO posts(title, slug, content, category_id) 
+            VALUES ($2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
         Table::Categories => r#"
             INSERT INTO categories(category, slug, description)
             VALUES ($1, $2, $3)
