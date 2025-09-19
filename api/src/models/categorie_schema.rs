@@ -8,3 +8,9 @@ pub struct CreateCategorieSchema {
     pub description: String,
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct PatchCategorie {
+    pub category: Option<String>,
+    pub slug: Option<String>,
+    pub description: Option<String>
+}

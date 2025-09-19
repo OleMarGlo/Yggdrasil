@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, response::IntoResponse};
 use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, Table}, functions::parse_id, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
+use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, update_one_row, Table}, functions::parse_id, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
 
 pub async fn fetch_categories(pool: &PgPool) 
 -> Result<Vec<CategorieModel>, sqlx::Error> {
@@ -49,6 +49,24 @@ pub async fn delete_categorie(
     let sql = delete_row(Table::Categories);
 
     sqlx::query_as::<_, CategorieModel>(sql)
+        .bind(id)
+        .fetch_one(pool)
+        .await
+}
+
+pub async fn update_row(
+    pool: &PgPool,
+    id: i32,
+    category: Option<String>,
+    slug: Option<String>,
+    desc: Option<String>
+) -> Result<CategorieModel, sqlx::Error> {
+    let sql = update_one_row(Table::Categories);
+
+    sqlx::query_as::<_, CategorieModel>(sql)
+        .bind(category)
+        .bind(slug)
+        .bind(desc)
         .bind(id)
         .fetch_one(pool)
         .await

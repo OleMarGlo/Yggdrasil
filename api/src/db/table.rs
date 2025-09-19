@@ -89,3 +89,18 @@ pub fn get_posts_with_categorie(table: Table) -> &'static str {
         _ => unimplemented!("Unimplemented"),
     }
 }
+
+pub fn update_one_row(table: Table) -> &'static str {
+    match table {
+        Table::Posts => unimplemented!("unimplemented"),
+        Table::Categories => r#"
+            UPDATE categories
+            SET 
+                category = COALESCE($1, category),   
+                slug = COALESCE($2, slug),
+                description = COALESCE($3, description)
+            WHERE id = $4
+            RETURNING *
+        "#,
+    }
+}

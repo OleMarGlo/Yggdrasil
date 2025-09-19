@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{extract::{Path, State}, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
 
-use crate::{db::categories::queries::{create_categorie, delete_categorie, fetch_categories, fetch_one_categorie}, functions::{get_highest_id, parse_id, parse_id_handler}, models::{categorie_schema::CreateCategorieSchema, categories::{CategorieModel, CategorieModelResponse}}, AppState};
+use crate::{db::categories::queries::{create_categorie, delete_categorie, fetch_categories, fetch_one_categorie, update_row}, functions::{get_highest_id, parse_id, parse_id_handler}, models::{categorie_schema::{CreateCategorieSchema, PatchCategorie}, categories::{CategorieModel, CategorieModelResponse}}, AppState};
 
 fn to_category_response(cat: &CategorieModel) -> CategorieModelResponse {
     CategorieModelResponse { 
@@ -43,7 +43,7 @@ pub async fn get_categories(
 pub async fn get_one_categorie(
     State(data): State<Arc<AppState>>,
     Path(id): Path<String>, 
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+) -> Result<impl IntoResponse,(StatusCode, Json<serde_json::Value>)> {
     let categorie = fetch_one_categorie(&data.db, &id)
         .await
         .map_err(|_| {
@@ -83,12 +83,12 @@ pub async fn post_categorie(
     }
 }
 
-pub async fn del_cateogorie(
+pub async fn del_categorie(
     State(data): State<Arc<AppState>>,
     Path(id_str): Path<String>
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let id = parse_id_handler(&id_str)?;
-    let post = delete_categorie(&data.db, id)
+    let categorie = delete_categorie(&data.db, id)
         .await
         .map_err(|err| {
             let errpr_response = serde_json::json!({
@@ -98,11 +98,36 @@ pub async fn del_cateogorie(
             (StatusCode::BAD_REQUEST, Json(errpr_response))
         })?;
 
-        let post_response = to_category_response(&post);
+        let categorie_response = to_category_response(&categorie);
 
         let json_response = json!({
             "status": "ok",
-            "post": post_response
+            "categorie": categorie_response
+        });
+        Ok(Json(json_response))
+}
+
+pub async fn patch_categorie_handler(
+    State(data): State<Arc<AppState>>,
+    Path(id_str): Path<String>,             // path first
+    Json(payload): Json<PatchCategorie>,    // then body
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_str)?;
+    let categorie = update_row(&data.db, id, payload.category, payload.slug, payload.description)
+        .await
+        .map_err(|err| {
+            let errpr_response = serde_json::json!({
+                "status": "error",
+                "message": format!("unable to delete id, err: {}", err),
+            });
+            (StatusCode::BAD_REQUEST, Json(errpr_response))
+        })?;
+
+        let categorie_response = to_category_response(&categorie);
+
+        let json_response = json!({
+            "status": "ok",
+            "categorie": categorie_response
         });
         Ok(Json(json_response))
 }
