@@ -1,8 +1,9 @@
 use std::sync::Arc;
 
 use axum::{extract::{Path, State}, http::StatusCode, response::IntoResponse, Json};
+use sqlx::PgPool;
 
-use crate::{db::{categories::queries::{fetch_categories, fetch_one_categorie}}, models::categories::{CategorieModel, CategorieModelResponse}, AppState};
+use crate::{db::categories::queries::{create_categorie, fetch_categories, fetch_one_categorie}, functions::get_highest_id, models::{categorie_schema::CreateCategorieSchema, categories::{CategorieModel, CategorieModelResponse}}, AppState};
 
 fn to_category_response(cat: &CategorieModel) -> CategorieModelResponse {
     CategorieModelResponse { 
@@ -58,4 +59,26 @@ pub async fn get_one_categorie(
     });
 
     Ok(Json(json_response))
+}
+
+pub async fn post_categorie(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CreateCategorieSchema>
+) -> Result <impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = match get_highest_id(&data.db).await {
+        Ok(Some(highest_id)) => highest_id + 1,
+        Ok(None) => 1,
+        Err(_) => {
+            return Err((StatusCode::INTERNAL_SERVER_ERROR, Json(serde_json::json!({
+                "error": "unable to query DB"
+            }))));        
+        }
+    };
+
+    match create_categorie(&data.db, sqlx::types::Json(body), id).await {
+        Ok(_) => Ok((StatusCode::CREATED, Json(serde_json::json!({"message": "Post created successfully"})))),
+        Err(_) => Err((StatusCode::BAD_REQUEST, Json(serde_json::json!({
+            "error": "unable to create post"
+        })))),    
+    }
 }

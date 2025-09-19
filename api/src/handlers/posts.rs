@@ -4,7 +4,7 @@ use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoRespon
 use serde_json::json;
 use sqlx::PgPool;
 
-use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, models::post_schema::CreatePostSchema, AppState};
+use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, functions::get_highest_id, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 
@@ -157,13 +157,6 @@ pub async fn delete_post(
             "post": post_response
         });
         Ok(Json(json_response))
-}
-
-async fn get_highest_id(pool: &PgPool) -> Result<Option<i32>, sqlx::Error> {
-    let row: (i32,) = sqlx::query_as("SELECT MAX(id) FROM posts")
-        .fetch_one(pool)
-        .await?;
-    Ok(Some(row.0))
 }
 
 fn parse_id(id_string: &String) 

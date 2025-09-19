@@ -43,7 +43,7 @@ pub fn add_one_row(table: Table) -> &'static str {
             VALUES ($1, $2, $3, $4, (SELECT id FROM categories WHERE category=$5));"#,
         Table::Categories => r#"
             INSERT INTO categories(id, category, slug, description)
-            VALUES ($1, $2, $3, $4)
+            VALUES ($1, $2, $3, $4)
         "#,
     }
 }

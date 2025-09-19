@@ -1,7 +1,7 @@
 -- Create categories first
 CREATE TABLE IF NOT EXISTS categories (
     id          INTEGER PRIMARY KEY,
-    category   VARCHAR(255) NOT NULL,
+    category    VARCHAR(255) NOT NULL,
     slug        VARCHAR(255) NOT NULL,
     description TEXT NOT NULL
 );

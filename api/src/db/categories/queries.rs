@@ -1,6 +1,7 @@
-use sqlx::PgPool;
+use axum::http::StatusCode;
+use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{fetch_all, fetch_one_row, Table}, functions::parse_id, models::categories::CategorieModel};
+use crate::{db::table::{add_one_row, fetch_all, fetch_one_row, Table}, functions::parse_id, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
 
 pub async fn fetch_categories(pool: &PgPool) 
 -> Result<Vec<CategorieModel>, sqlx::Error> {
@@ -20,4 +21,23 @@ pub async fn fetch_one_categorie(pool: &PgPool, id_str: &str)
         .bind(id)
         .fetch_one(pool)
         .await
+}
+
+pub async fn create_categorie(
+    pool: &PgPool,
+    body: Json<CreateCategorieSchema>,
+    id: i32
+) -> Result<StatusCode, sqlx::Error> {
+    let sql = add_one_row(Table::Categories);
+
+    match sqlx::query(sql)
+        .bind(&id)
+        .bind(&body.category)
+        .bind(&body.slug)
+        .bind(&body.description)
+        .execute(pool)
+        .await {
+            Ok(_) => Ok(StatusCode::CREATED),
+            Err(err) => Err(err), 
+        }
 }
