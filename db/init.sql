@@ -1,6 +1,6 @@
 -- Create categories first
 CREATE TABLE IF NOT EXISTS categories (
-    id          INTEGER PRIMARY KEY,
+    id          SERIAL PRIMARY KEY,
     category    VARCHAR(255) NOT NULL,
     slug        VARCHAR(255) NOT NULL,
     description TEXT NOT NULL
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS categories (
 
 -- Then posts referencing categories
 CREATE TABLE IF NOT EXISTS posts (
-    id          INTEGER PRIMARY KEY,
+    id          SERIAL PRIMARY KEY,
     title       VARCHAR(255) NOT NULL,
     slug        VARCHAR(255) NOT NULL,
     content     TEXT NOT NULL,
