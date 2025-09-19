@@ -4,7 +4,7 @@ use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoRespon
 use serde_json::json;
 use sqlx::PgPool;
 
-use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, functions::get_highest_id, models::post_schema::CreatePostSchema, AppState};
+use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, functions::{get_highest_id, parse_id, parse_id_handler}, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 
@@ -103,7 +103,7 @@ pub async fn get_posts_in_categorie(
     State(data): State<Arc<AppState>>,
     Path(id_string): Path<String>
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let id = parse_id(&id_string)?;
+    let id = parse_id_handler(&id_string)?;
     let posts = get_posts_in_categies_sql(&data.db, id)
         .await
         .map_err(|err| {
@@ -139,7 +139,7 @@ pub async fn delete_post(
     State(data): State<Arc<AppState>>,
     Path(id_string): Path<String>
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let id = parse_id(&id_string)?;
+    let id = parse_id_handler(&id_string)?;
     let post = delete_post_sql(&data.db, id)
         .await
         .map_err(|err| {
@@ -157,17 +157,4 @@ pub async fn delete_post(
             "post": post_response
         });
         Ok(Json(json_response))
-}
-
-fn parse_id(id_string: &String) 
--> Result<i32, (StatusCode, Json<serde_json::Value>)> {
-    match id_string.parse::<i32>() {
-        Ok(num) => Ok(num),
-        Err(_) => Err((
-            StatusCode::BAD_REQUEST, 
-            Json(serde_json::json!({
-            "error": "unable to parse id, not an int"
-            })
-        ))),
-    }
 }

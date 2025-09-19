@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use axum::{extract::{Path, State}, http::StatusCode, response::IntoResponse, Json};
-use sqlx::PgPool;
+use serde_json::json;
 
-use crate::{db::categories::queries::{create_categorie, fetch_categories, fetch_one_categorie}, functions::get_highest_id, models::{categorie_schema::CreateCategorieSchema, categories::{CategorieModel, CategorieModelResponse}}, AppState};
+use crate::{db::categories::queries::{create_categorie, delete_categorie, fetch_categories, fetch_one_categorie}, functions::{get_highest_id, parse_id, parse_id_handler}, models::{categorie_schema::CreateCategorieSchema, categories::{CategorieModel, CategorieModelResponse}}, AppState};
 
 fn to_category_response(cat: &CategorieModel) -> CategorieModelResponse {
     CategorieModelResponse { 
@@ -81,4 +81,28 @@ pub async fn post_categorie(
             "error": "unable to create post"
         })))),    
     }
+}
+
+pub async fn del_cateogorie(
+    State(data): State<Arc<AppState>>,
+    Path(id_str): Path<String>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_str)?;
+    let post = delete_categorie(&data.db, id)
+        .await
+        .map_err(|err| {
+            let errpr_response = serde_json::json!({
+                "status": "error",
+                "message": format!("unable to delete id, err: {}", err),
+            });
+            (StatusCode::BAD_REQUEST, Json(errpr_response))
+        })?;
+
+        let post_response = to_category_response(&post);
+
+        let json_response = json!({
+            "status": "ok",
+            "post": post_response
+        });
+        Ok(Json(json_response))
 }
