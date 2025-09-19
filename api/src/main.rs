@@ -4,6 +4,7 @@ mod router;
 mod consts;
 mod models;
 mod functions;
+mod services;
 
 use std::sync::Arc;
 

@@ -2,9 +2,8 @@ use std::sync::Arc;
 
 use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
-use sqlx::PgPool;
 
-use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, functions::{get_highest_id, parse_id, parse_id_handler}, models::post_schema::CreatePostSchema, AppState};
+use crate::{db::posts::queries::{create_post, delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql}, functions::{get_highest_id, parse_id_handler}, models::post_schema::CreatePostSchema, AppState};
 use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
 
 

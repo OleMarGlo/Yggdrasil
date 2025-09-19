@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 -- Seed
+/*
 INSERT INTO categories (id, category, slug, description) VALUES
     (1, 'Programming', 'programming', 'Projects i am either working on or want to work on')
 ON CONFLICT (id) DO NOTHING;
@@ -33,3 +34,4 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO posts (id, title, slug, content, category_id) VALUES
     (2, 'Hello World 2', 'hello-world', 'Hello world!', 2)
 ON CONFLICT (id) DO NOTHING;
+*/

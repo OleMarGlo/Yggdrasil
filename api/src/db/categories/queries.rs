@@ -1,7 +1,7 @@
-use axum::{http::StatusCode, response::IntoResponse};
+use axum::http::StatusCode;
 use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, update_one_row, Table}, functions::parse_id, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
+use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, update_one_row, Table}, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
 
 pub async fn fetch_categories(pool: &PgPool) 
 -> Result<Vec<CategorieModel>, sqlx::Error> {
@@ -12,9 +12,8 @@ pub async fn fetch_categories(pool: &PgPool)
         .await
 }
 
-pub async fn fetch_one_categorie(pool: &PgPool, id_str: &str)
+pub async fn fetch_one_categorie(pool: &PgPool, id: i32)
 -> Result<CategorieModel, sqlx::Error> {
-    let id = parse_id(id_str)?;
     let sql = fetch_one_row(Table::Categories);
 
     sqlx::query_as::<_, CategorieModel>(sql)
@@ -26,12 +25,10 @@ pub async fn fetch_one_categorie(pool: &PgPool, id_str: &str)
 pub async fn create_categorie(
     pool: &PgPool,
     body: Json<CreateCategorieSchema>,
-    id: i32
 ) -> Result<StatusCode, sqlx::Error> {
     let sql = add_one_row(Table::Categories);
 
     match sqlx::query(sql)
-        .bind(&id)
         .bind(&body.category)
         .bind(&body.slug)
         .bind(&body.description)
