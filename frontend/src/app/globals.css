@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@theme {
+    --breakpoint-xs: 30rem;
+    --breakpoint-lg75: 75rem;
+    --breakpoint-2xl: 100rem;
+    --breakpoint-3xl: 120rem;
+    --color-yggdrasil: #fd8738;
+    --color-yggdrasil-950: #0e0e0e;
+    --color-yggdrasil-900: #121212;
+    --color-yggdrasil-800: #181818;
+    --color-yggdrasil-700: #1a1a1a;
+    --color-yggdrasil-600: #212121;
+    --color-yggdrasil-500: #323232;
+    --color-yggdrasil-400: #424242;
+    --color-yggdrasil-300: #5e5e5e;
+    --color-yggdrasil-200: #727272;
+    --color-yggdrasil-100: #b0b0b0;
+    --color-yggdrasil-50: #ededed;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+.dark {
+    --background: #0e0e0e;
+    --foreground: #ededed;
+
+    --color-yggdrasil: #fd8738;
+    --color-yggdrasil-950: #0e0e0e;
+    --color-yggdrasil-900: #121212;
+    --color-yggdrasil-800: #181818;
+    --color-yggdrasil-700: #1a1a1a;
+    --color-yggdrasil-600: #212121;
+    --color-yggdrasil-500: #323232;
+    --color-yggdrasil-400: #424242;
+    --color-yggdrasil-300: #5e5e5e;
+    --color-yggdrasil-200: #6b6b6b;
+    --color-yggdrasil-100: #b0b0b0;
+    --color-yggdrasil-50: #ededed;
+}
+
+.light {
+    --background: #ededed;
+    --foreground: #0e0e0e;
+
+    --color-yggdrasil: #fd8738;
+    --color-yggdrasil-950: #ededed;
+    --color-yggdrasil-900: #b0b0b0;
+    --color-yggdrasil-800: #cfcfcf;
+    --color-yggdrasil-700: #d9d9d9;
+    --color-yggdrasil-600: #e3e3e3;
+    --color-yggdrasil-500: #ebebeb;
+    --color-yggdrasil-400: #f3f3f3;
+    --color-yggdrasil-300: #f7f7f7;
+    --color-yggdrasil-200: #fafafa;
+    --color-yggdrasil-100: #fcfcfc;
+    --color-yggdrasil-50: #ffffff;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
