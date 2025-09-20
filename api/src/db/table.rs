@@ -92,7 +92,29 @@ pub fn get_posts_with_categorie(table: Table) -> &'static str {
 
 pub fn update_one_row(table: Table) -> &'static str {
     match table {
-        Table::Posts => unimplemented!("unimplemented"),
+        Table::Posts => r#"
+        WITH updated_post AS (
+            UPDATE posts
+            SET 
+                title = COALESCE($1, title),   
+                slug = COALESCE($2, slug),
+                content = COALESCE($3, content),
+                category_id = COALESCE($4, category_id),
+                updated_at = NOW()
+            WHERE id = $5
+            RETURNING *
+        )
+        SELECT
+            up.id,
+            up.title,
+            up.slug,
+            up.content,
+            up.updated_at,
+            up.created_at,
+            c.category AS category
+        FROM updated_post up
+        JOIN categories c ON up.category_id = c.id;
+            "#,
         Table::Categories => r#"
             UPDATE categories
             SET 
@@ -100,7 +122,7 @@ pub fn update_one_row(table: Table) -> &'static str {
                 slug = COALESCE($2, slug),
                 description = COALESCE($3, description)
             WHERE id = $4
-            RETURNING *
+            RETURNING *;
         "#,
     }
 }
