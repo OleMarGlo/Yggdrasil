@@ -14,3 +14,11 @@ pub struct CreatePostSchema {
     pub content: String,
     pub category: String,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct PatchPost {
+    pub title: Option<String>,
+    pub slug: Option<String>,
+    pub content: Option<String>,
+    pub category: Option<i32>,
+}
