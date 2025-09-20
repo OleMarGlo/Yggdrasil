@@ -1,48 +1,75 @@
 use std::sync::Arc;
 
-use axum::{extract::{Query, State}, http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
 
-use crate::{db::queries::fetch_posts, AppState};
-use crate::models::{posts::{PostModel, PostModelResponse}, post_schema::FilterOptions};
+use crate::{db::posts::queries::create_post, functions::parse_id_handler, models::post_schema::{CreatePostSchema, FilterOptions, PatchPost}, services::post::{delete_post_from_db, format_post_response_many, format_post_response_one, get_post_from_db, get_posts_from_db, get_posts_in_categorie_from_db, patch_post_in_db}, AppState};
 
-fn to_post_response(post: &PostModel) ->  PostModelResponse {
-    PostModelResponse { 
-        id: (post.id), 
-        title: (post.title.to_owned()), 
-        slug: (post.slug.to_owned()), 
-        content: (post.content.to_owned()), 
-        created_at: (post.created_at), 
-        updated_at: (post.updated_at) 
-    }
-}
 
-pub async fn posts_handler(
+// fetches all posts in DB
+pub async fn get_posts(
     Query(opts): Query<FilterOptions>,
     State(data): State<Arc<AppState>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let limit = opts.limit.unwrap_or(10);
-    let offset = (opts.page.unwrap_or(1) - 1) * limit;
+    let limit = opts.limit.unwrap_or(10);       //limit the amount fetched
+    let offset = (opts.page.unwrap_or(1) - 1) * limit;          //used for paging
+    
+    // fetches posts from DB
+    let posts = get_posts_from_db(&data.db, limit as i32, offset as i32).await?;
+    Ok(format_post_response_many(posts))
+}
 
-    let posts = fetch_posts(&data.db, limit as i32, offset as i32)
-        .await
-        .map_err(|err| {
-            let error_response = serde_json::json!({
-                "status": "error",
-                "message": format!("Database error: {}", err),
-            });
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
-    })?;
+pub async fn get_post(
+    State(data): State<Arc<AppState>>,
+    Path(id_str): Path<String>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_str)?;
+    let post = get_post_from_db(&data.db, id).await?;
+    Ok(format_post_response_one(post))
+}
 
-    let post_responses = posts
-        .into_iter()
-        .map(|post: PostModel| to_post_response(&post))
-        .collect::<Vec<PostModelResponse>>();
+pub async fn post_posts(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CreatePostSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {    
+    match create_post(&data.db, sqlx::types::Json(body)).await {
+        Ok(_) => Ok((StatusCode::OK, Json(serde_json::json!({"message": "Post created successfully"})))),
+        Err(_) => Err((StatusCode::BAD_REQUEST, Json(serde_json::json!({
+            "error": "unable to create post"
+        })))),
+    }
+}
 
-    let json_response = serde_json::json!({
-        "status": "ok",
-        "count": post_responses.len(),
-        "posts": post_responses,
-    });
+pub async fn get_posts_in_categorie(
+    State(data): State<Arc<AppState>>,
+    Path(id_string): Path<String>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_string)?;
+    let posts = get_posts_in_categorie_from_db(&data.db, id).await?;
 
-    Ok(Json(json_response))
+    match posts.is_empty() {
+        true => Err((StatusCode::BAD_REQUEST, Json(serde_json::json!({
+            "stauts": "error",
+            "message": "categorie is empty",
+        })))),
+        _ => Ok(format_post_response_many(posts))
+    }
+}
+
+pub async fn delete_post(
+    State(data): State<Arc<AppState>>,
+    Path(id_string): Path<String>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_string)?;
+    let post = delete_post_from_db(&data.db, id).await?;
+    Ok(format_post_response_one(post))
+}
+
+pub async fn patch_post(
+    State(data): State<Arc<AppState>>,
+    Path(id_str): Path<String>,             // path first
+    Json(payload): Json<PatchPost>, 
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let id = parse_id_handler(&id_str)?;
+    let post = patch_post_in_db(&data.db, id, payload).await?;
+    Ok(format_post_response_one(post))
 }

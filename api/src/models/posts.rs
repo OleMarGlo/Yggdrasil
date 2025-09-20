@@ -6,6 +6,7 @@ pub struct PostModel {
     pub title: String,
     pub slug: String,
     pub content: String,
+    pub category: String,
     pub created_at: Option<chrono::DateTime<chrono::Utc>>,
     pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
@@ -16,6 +17,7 @@ pub struct PostModelResponse {
     pub title: String,
     pub slug: String,
     pub content: String,
+    pub category: String,
     pub created_at: Option<chrono::DateTime<chrono::Utc>>,
     pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }

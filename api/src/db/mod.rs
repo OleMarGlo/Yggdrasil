@@ -1,2 +1,4 @@
 pub mod table;
-pub mod queries;
+pub mod connection;
+pub mod posts;
+pub mod categories;
