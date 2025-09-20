@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Logo from '../logo/logo'
+import ThemeSwitch from '../theme/themeSwitch'
 
 export default function NavBar() {
     return (
@@ -11,7 +12,7 @@ export default function NavBar() {
                     <Link href='/'>Skills</Link>
                 </div>
                 <div className='justify-self-end'>
-                    <h1>Pie</h1>
+                    <ThemeSwitch />
                 </div>
             </div>
         </nav>
