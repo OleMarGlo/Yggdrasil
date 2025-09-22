@@ -1,17 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import Image from 'next/image'
 import { getCookie, setCookie } from '@/utils/cookies'
 import './toggle.css'
+import { useRouter } from 'next/navigation'
 
 export default function ThemeSwitch() {
+    const router = useRouter()
     const [theme, setTheme] = useState<'dark' | 'light'>('dark')
-    const [showConfirmation, setShowConfirmation] = useState(false)
-    const [showExitPopup, setShowExitPopup] = useState(false)
-    const [pendingTheme, setPendingTheme] = useState<'dark' | 'light' | null>(
-        null
-    )
 
     useEffect(() => {
         const savedTheme = getCookie('theme') as 'dark' | 'light'
@@ -24,40 +20,15 @@ export default function ThemeSwitch() {
     }, [theme])
 
     function toggleTheme() {
-        if (theme === 'dark') {
-            setPendingTheme('light')
-            setShowConfirmation(true)
-        } else {
-            confirmToggle('dark')
-        }
-    }
-
-    function confirmToggle(newTheme: 'dark' | 'light') {
-        setShowConfirmation(false)
-        if (newTheme === 'light') {
-            setShowExitPopup(true)
-        } else {
-            setCookie('theme', 'dark')
-            setTheme('dark')
-        }
-    }
-
-    function cancelToggle() {
-        setShowConfirmation(false)
-    }
-
-    function closeExitPopup() {
-        setShowExitPopup(false)
-        if (pendingTheme) {
-            setCookie('theme', pendingTheme)
-            setTheme(pendingTheme)
-            setPendingTheme(null)
-        }
+        const newTheme = theme === 'dark' ? 'light' : 'dark'
+        setCookie('theme', newTheme)
+        setTheme(newTheme)
+        router.refresh()
     }
 
     return (
-        <div className='grid place-items-center justify-end'>
-            <label>
+        <div className='grid place-items-center justify-end rounded-[var(--border-radius)] hover:bg-[#6464641a]'>
+            <label className='cursor-pointer'>
                 <input
                     type='checkbox'
                     checked={theme === 'light'}
@@ -66,107 +37,6 @@ export default function ThemeSwitch() {
                 />
                 <ThemeIcon />
             </label>
-
-            {showConfirmation && (
-                <div
-                    className={
-                        'fixed inset-0 bg-black bg-opacity-50 flex ' +
-                        'justify-center items-center z-50'
-                    }
-                >
-                    <div
-                        className={
-                            'bg-login-700 p-6 rounded-lg shadow-lg ' +
-                            'w-90 text-center'
-                        }
-                    >
-                        <p className='mb-4 text-lg font-semibold'>
-                            Have you put on your sunglasses?
-                        </p>
-                        <div className='flex items-center justify-around'>
-                            <button
-                                onClick={() =>
-                                    confirmToggle(
-                                        theme === 'dark' ? 'light' : 'dark'
-                                    )
-                                }
-                                className={
-                                    'bg-login-500 before:content-["Yes"] ' +
-                                    'w-[3rem] h-[2.6rem] text-xs  rounded-lg ' +
-                                    'hover:bg-red-600 ' +
-                                    'hover:before:content-["Sure?"] ' +
-                                    'cursor-pointer'
-                                }
-                            ></button>
-                            <button
-                                onClick={cancelToggle}
-                                className={
-                                    'bg-login py-2 px-4 w-[14rem] ' +
-                                    'rounded-lg hover:bg-orange-500 ' +
-                                    'cursor-pointer'
-                                }
-                            >
-                                No
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {showExitPopup && (
-                <div
-                    className={
-                        'fixed inset-0 bg-black bg-opacity-50 flex ' +
-                        'justify-center items-center z-50'
-                    }
-                >
-                    <div
-                        className={
-                            'bg-login-700 p-6 rounded-lg shadow-lg ' +
-                            'w-80 text-center'
-                        }
-                    >
-                        <Image
-                            src={'/lightTheme.gif'}
-                            className='mb-2'
-                            width={500}
-                            height={500}
-                            alt='blind'
-                        />
-                        <p className='mb-4 text-login text-lg font-semibold'>
-                            Proceed with extreme caution!
-                        </p>
-                        <div className='flex flex-row items-center gap-[1rem]'>
-                            <button
-                                onClick={() => {
-                                    closeExitPopup()
-                                }}
-                                className={
-                                    'bg-login-500 w-[3rem] h-[2.6rem] ' +
-                                    'rounded-lg text-sm hover:bg-red-600 ' +
-                                    'cursor-pointer'
-                                }
-                            >
-                                Exit
-                            </button>
-                            <button
-                                onClick={() => {
-                                    setCookie('theme', 'dark')
-                                    setTheme('dark')
-                                    setShowExitPopup(false)
-                                }}
-                                className={
-                                    'bg-login  py-2 px-4 w-[14rem] ' +
-                                    'rounded-lg hover:bg-green-600 ' +
-                                    'cursor-pointer'
-                                }
-                            >
-                                GO BACK!
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     )
 }
@@ -174,7 +44,7 @@ export default function ThemeSwitch() {
 function ThemeIcon() {
     return (
         <svg
-            className='theme-toggle_svg cursor-pointer size-16'
+            className='theme-toggle_svg'
             viewBox='0 0 100 100'
             xmlns='http://www.w3.org/2000/svg'
         >
@@ -189,7 +59,7 @@ function ThemeIcon() {
             </mask>
             <circle
                 className='theme-toggle_sun-moon'
-                mask='url(#theme-toggle_clip-path)'
+                mask={'url(#theme-toggle_clip-path)'}
                 cx='50'
                 cy='50'
                 r='23'
@@ -201,12 +71,7 @@ function ThemeIcon() {
                 width='14'
                 height='6'
             />
-            <rect
-                className='theme-toggle_sun-ray'
-                y='47'
-                width='14'
-                height='6'
-            />
+            <rect className='theme-toggle_sun-ray' y='47' width='14' height='6' />
             <rect
                 className='theme-toggle_sun-ray'
                 x='47'
@@ -216,10 +81,7 @@ function ThemeIcon() {
             />
             <path
                 className='theme-toggle_sun-ray'
-                d={
-                    'M75 78.2426L79.2426 74L89.1421 83.8995L84.8995 ' +
-                    '88.1421L75 78.2426Z'
-                }
+                d='M75 78.2426L79.2426 74L89.1421 83.8995L84.8995 88.1421L75 78.2426Z'
             />
             <rect
                 className='theme-toggle_sun-ray'

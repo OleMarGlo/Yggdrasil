@@ -24,13 +24,13 @@ export default function SpotlightLink({ href, children }: SpotlightLinkProps) {
     return (
         <Link
             href={href}
-            className='relative rounded-xl px-6 py-4 cursor-pointer'
+            className='relative rounded-xl px-6 py-2 cursor-pointer border border-yggdrasil-200'
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
             onMouseMove={handleMouseMove}
             style={{
                 background: hovering
-                    ? `radial-gradient(circle 60px at ${bgPosition.x}px ${bgPosition.y}px, rgba(255,255,255,0.3), transparent 80%)`
+                    ? `radial-gradient(circle 60px at ${bgPosition.x}px ${bgPosition.y}px, var(--color-yggdrasil-400), transparent 80%)`
                     : 'transparent',
                 transition: 'background 0.2s',
             }}

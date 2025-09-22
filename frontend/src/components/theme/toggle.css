@@ -1,14 +1,14 @@
 .theme-toggle_svg {
-    height: 4rem;
-    padding: 0.8rem 0.8rem;
+    height: 3rem;
+    padding: .8rem .8rem;
 }
 
 .dark .theme-toggle_svg {
-    fill: white;
+    fill: white
 }
 
 .theme-toggle_sun-ray {
-    transition: 0.4s;
+    transition: .4s;
 }
 
 .light .theme-toggle_sun-ray {
@@ -20,7 +20,7 @@
 }
 
 .theme-toggle_mask-circle {
-    transition: 0.4s;
+    transition: .4s;
 }
 
 .dark .theme-toggle_mask-circle {
@@ -29,15 +29,22 @@
 
 .theme-toggle_sun-moon {
     transform-origin: center;
-    transition: 0.4s;
+    transition: .4s;
 }
 
 .light .theme-toggle_sun-moon {
     transform: scale(1.9);
-    fill: white;
+    fill: black;
 }
 
 .dark .theme-toggle_sun-moon {
     transform: scale(1);
     fill: white;
+}
+
+@media only screen and (max-width: 800px) {
+    .topbar--open .theme-toggle_sun-moon,
+    .topbar--open .theme-toggle_sun-moon {
+        fill: white;
+    }
 }

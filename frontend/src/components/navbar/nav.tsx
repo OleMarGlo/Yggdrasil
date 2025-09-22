@@ -5,19 +5,24 @@ import SpotlightGroup from '../hover/hoverFollow'
 
 export default function NavBar() {
     return (
-        <nav className='bg-yggdrasil-700/50 fixed w-full'>
-            <div className='grid grid-cols-3 justify-between items-center px-40 fill-yggdrasil-50'>
-                <div className='justify-self-start'>
+        <nav className='bg-yggdrasil-700/50 fixed w-full backdrop-blur-md z-50'>
+            <div className='mx-auto grid grid-cols-3 items-center h-16 px-20'>
+                <div className='flex justify-start'>
                     <Link href='/'>
-                        <Logo className='fill-foreground size-14 transition-colors duration-300'/>
+                        <Logo className='fill-foreground size-14 transition-colors duration-300' />
                     </Link>
                 </div>
-                <SpotlightGroup/>
-                <div className='justify-self-end h-auto hover:bg-yggdrasil-600'>
-                    <ThemeSwitch  />
+                <div className='flex justify-center'>
+                    <div className='hidden md:block'>
+                        <SpotlightGroup />
+                    </div>
+                </div>
+                <div className='flex justify-end'>
+                    <ThemeSwitch />
                 </div>
             </div>
         </nav>
     )
 }
+
 
