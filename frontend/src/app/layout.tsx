@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import NavBar from '@/components/navbar/nav'
+import Footer from '@/components/footer/footer'
 
 export const metadata: Metadata = {
     title: 'Yggdrasil',
@@ -18,9 +19,14 @@ export default function RootLayout({
                 <div className='h-16'>
                     <NavBar />
                 </div>
-                <main className='flex flex-1 p-2'>
-                    {children}
-                </main>
+                <div className='max-w-7xl mx-auto bg-yggdrasil-900'>
+                    <main className='flex flex-1 p-4'>
+                        {children}
+                    </main>
+                    <div>
+                        <Footer />
+                    </div>
+                </div>
             </body>
         </html>
     )

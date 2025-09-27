@@ -1,4 +1,6 @@
 import { getPosts } from '@/utils/api'
+import en from '@/text/postsPage/en.json'
+import Welcome from '@/components/welcome/welcome'
 
 export default async function Page() {
     const posts = await getPosts()
@@ -10,11 +12,10 @@ export default async function Page() {
         )
     }
 
-    console.log(posts.posts)
-
     return (
-        <div className=''>
-            <ul>
+        <div className='w-full h-full'>
+            <Welcome />
+            <ul className='grid-cols-3'>
                 {posts.posts.map((post, index) => (
                     <li key={index}>
                         {typeof post === 'string' ? post : post.title}
