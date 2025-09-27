@@ -13,9 +13,9 @@ export default async function Page() {
         )
     }
     return (
-        <div className='w-full mx-auto min-h-screen'>
-            <div className='grid text-center'>
-                <div className=''>
+        <div className='w-full min-h-screen grid place-items-center px-[clamp(1.5rem,5vw,3rem)]'>
+            <div className='grid gap-4 text-center'>
+                <div>
                     <h1 className='text-[clamp(1.5rem,5vw,3rem)] font-bold'>{headline}</h1>
                     <h2 className='text-xl text-yggdrasil-300'>{subheadline}</h2>
                 </div>
@@ -23,17 +23,21 @@ export default async function Page() {
                 <p className='mt-2'>{mission}</p>
                 <p className='mt-6 font-semibold'>{cta}</p>
             </div>
-            <ul className='grid grid-cols-2 gap-4 max-w-3xl mx-auto text-center'>
+
+            <ul className='grid grid-cols-2 gap-4 max-w-3xl text-center w-full'>
                 {posts.posts.map((post, index) => (
-                    <div className='border p-3'>
-                        <li key={index} >
-                            {typeof post === 'string' ? post : post.title}
-                        </li>
-                        <div className='flex justify-between'>
-                            <p >{post.category}</p>
-                            <p className='hidden sm:block'>{new Date(post.updated_at).toLocaleDateString()}</p>
+                    <li
+                        key={index}
+                        className='border p-3 flex flex-col justify-between'
+                    >
+                        <span>{typeof post === 'string' ? post : post.title}</span>
+                        <div className='flex justify-between text-sm mt-2'>
+                            <p>{post.category}</p>
+                            <p className='hidden sm:block'>
+                                {new Date(post.updated_at).toLocaleDateString()}
+                            </p>
                         </div>
-                    </div>
+                    </li>
                 ))}
             </ul>
         </div>
