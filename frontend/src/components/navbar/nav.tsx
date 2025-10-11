@@ -5,7 +5,7 @@ import SpotlightGroup from '../hover/hoverFollow'
 
 export default function NavBar() {
     return (
-        <nav className='bg-yggdrasil-700/50 fixed w-full backdrop-blur-md z-50'>
+        <nav className='bg-yggdrasil-700/50 fixed w-full backdrop-blur-md z-80'>
             <div className='mx-auto grid grid-cols-3 items-center px-20 h-full p-2'>
                 <div className='flex justify-start'>
                     <Link href='/'>

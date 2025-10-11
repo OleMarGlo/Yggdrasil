@@ -13,18 +13,18 @@ export default async function Page() {
         )
     }
     return (
-        <div className='w-full min-h-screen grid place-items-center px-[clamp(1.5rem,5vw,3rem)]'>
-            <div className='grid gap-4 text-center'>
+        <div className='w-full h-full grid relative grid-rows-[auto,1fr] place-items-center p-2'>
+            <div className='grid gap-3 text-center mt-0'>
                 <div>
-                    <h1 className='text-[clamp(1.5rem,5vw,3rem)] font-bold'>{headline}</h1>
-                    <h2 className='text-xl text-yggdrasil-300'>{subheadline}</h2>
+                    <h1 className='text-[clamp(1.5rem,5vw,3rem)] font-bold mt-0'>{headline}</h1>
+                    <h2 className='text-xl text-yggdrasil-300 mt-1'>{subheadline}</h2>
                 </div>
-                <p className='mt-4'>{about}</p>
-                <p className='mt-2'>{mission}</p>
-                <p className='mt-6 font-semibold'>{cta}</p>
+                <p className='mt-2'>{about}</p>
+                <p className='mt-1'>{mission}</p>
+                <p className='mt-3 font-semibold'>{cta}</p>
             </div>
 
-            <ul className='grid grid-cols-2 gap-4 max-w-3xl text-center w-full'>
+            <ul className='grid grid-cols-2 gap-4 max-w-3xl relative h-full text-center'>
                 {posts.posts.map((post, index) => (
                     <li
                         key={index}

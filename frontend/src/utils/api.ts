@@ -8,7 +8,7 @@ type GetWrapperProps = {
 }
 
 export async function getPosts(
-    limit: number | number = 10,
+    limit: number | number = 20,
     offset: number | number = 0,
 ): Promise<GetPostsProps | string>{
     const queryPars = new URLSearchParams({
