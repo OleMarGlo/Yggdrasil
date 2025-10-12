@@ -24,7 +24,7 @@ export default async function Page() {
                 <p className='mt-3 font-semibold'>{cta}</p>
             </div>
 
-            <ul className='grid grid-cols-2 gap-4 max-w-3xl relative h-full text-center'>
+            <ul className='grid grid-cols-2 gap-4 max-w-3xl relative h-full text-center p-2'>
                 {posts.posts.map((post, index) => (
                     <li
                         key={index}

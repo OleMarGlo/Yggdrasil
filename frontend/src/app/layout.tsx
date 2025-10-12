@@ -14,16 +14,16 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="en">
-            <body className="flex h-screen flex-col bg-yggdrasil-950">
-                    <NavBar />
-                    <div className="flex flex-col flex-1 overflow-y-auto max-w-7xl mx-auto bg-yggdrasil-900">
-                        <main className="flex-grow w-full py-16 ">
-                            {children}
-                        </main>
-                        <Footer />
-                    </div>
+        <html lang='en'>
+            <body className='flex h-screen flex-col bg-yggdrasil-950'>
+                <NavBar />
+                <div className='flex flex-col flex-1 overflow-y-auto no-scrollbar max-w-7xl mx-auto bg-yggdrasil-900'>
+                    <main className='flex-grow w-full py-16 '>
+                        {children}
+                    </main>
+                    <Footer />
+                </div>
             </body>
         </html>
-    );
+    )
 }
