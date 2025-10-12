@@ -5,15 +5,14 @@ type PostListProp = {
 }
 
 export default async function PostListItem({ post }: PostListProp) {
-    console.log(post)
     return (
         <SpotlightLink href={`/posts/${post.slug}`}>
-            <span>{typeof post === 'string' ? post : post.title}</span>
-            <div className='flex justify-between text-sm mt-2'>
-                <p>{post.category}</p>
-                <p className='hidden sm:block'>
-                    {new Date(post.updated_at).toLocaleDateString()}
-                </p>
+            <div className='flex flex-col items-center justify-center text-sm w-full h-full'>
+                <h1 className='truncate w-full py-2 text-[1.2rem]'>{post.title}</h1>
+                <div className='grid grid-cols-1 xs:grid-cols-2 w-full py-2'>
+                    <p className='truncate w-full'>{post.category}</p>
+                    <p>{new Date(post.updated_at).toLocaleDateString()}</p>
+                </div>
             </div>
         </SpotlightLink>
     )
