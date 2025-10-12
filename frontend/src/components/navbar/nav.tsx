@@ -17,7 +17,7 @@ export default function NavBar() {
                         <SpotlightGroup />
                     </div>
                 </div>
-                <div className='flex justify-end'>
+                <div className='flex justify-end hover:-translate-y-1'>
                     <ThemeSwitch />
                 </div>
             </div>

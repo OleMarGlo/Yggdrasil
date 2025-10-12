@@ -24,7 +24,7 @@ export default function SpotlightLink({ href, children }: SpotlightLinkProps) {
     return (
         <Link
             href={href}
-            className='relative rounded-xl px-6 py-2 cursor-pointer border border-yggdrasil-200'
+            className='relative rounded-2xl px-6 py-2 cursor-pointer border border-yggdrasil-200 hover:scale-103'
             onMouseEnter={() => setHovering(true)}
             onMouseLeave={() => setHovering(false)}
             onMouseMove={handleMouseMove}
