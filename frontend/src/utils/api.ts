@@ -20,6 +20,18 @@ export async function getPosts(
     return await getWrapper({ path })
 }
 
+export async function getPost(
+    id: number,
+): Promise<GetPostProps | string> {
+    const path = `${baseUrl+config.yggdrasilApi.POSTS_PATH}/${id}`
+    return await getWrapper({ path })
+}
+
+export async function getCategories(): Promise<GetCategoriesProps | string> {
+    const path = `${baseUrl+config.yggdrasilApi.CATEGORIES_PATH}`
+    return await getWrapper({ path })
+}
+
 async function getWrapper({ path, options = {} }: GetWrapperProps) {
     const baseHeaders = {
         'Content-Type': 'application/json',

@@ -1,8 +1,9 @@
 import { getPosts } from '@/utils/api'
 import en from '@/text/postsPage/en.json'
+import PostListItem from '@/components/post/post'
 
 export default async function Page() {
-    const { headline, subheadline, about, mission, cta } = en.intro
+    const { headline, subheadline, about, mission, cta } = en.posts
 
     const posts = await getPosts()
     if (typeof posts === 'string') {
@@ -24,19 +25,16 @@ export default async function Page() {
                 <p className='mt-3 font-semibold'>{cta}</p>
             </div>
 
-            <ul className='grid grid-cols-2 gap-4 max-w-3xl relative h-full text-center p-2'>
+            <ul className='grid grid-cols-2 max-w-3xl relative h-full text-center p-2'>
                 {posts.posts.map((post, index) => (
                     <li
                         key={index}
-                        className='border p-3 flex flex-col justify-between'
+                        className='p-3 flex flex-col justify-between'
                     >
-                        <span>{typeof post === 'string' ? post : post.title}</span>
-                        <div className='flex justify-between text-sm mt-2'>
-                            <p>{post.category}</p>
-                            <p className='hidden sm:block'>
-                                {new Date(post.updated_at).toLocaleDateString()}
-                            </p>
-                        </div>
+                        <PostListItem
+                            key={post.id}
+                            post={post}
+                        />
                     </li>
                 ))}
             </ul>
