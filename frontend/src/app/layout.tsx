@@ -16,16 +16,13 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className="flex h-screen flex-col bg-yggdrasil-950">
-                <div className="h-16">
                     <NavBar />
-                </div>
-
-                <div className="flex flex-col flex-1 overflow-y-auto max-w-7xl mx-auto w-full bg-yggdrasil-900">
-                    <main className="flex-grow w-full">
-                        {children}
-                    </main>
-                    <Footer />
-                </div>
+                    <div className="flex flex-col flex-1 overflow-y-auto max-w-7xl mx-auto bg-yggdrasil-900">
+                        <main className="flex-grow w-full py-16 ">
+                            {children}
+                        </main>
+                        <Footer />
+                    </div>
             </body>
         </html>
     );
