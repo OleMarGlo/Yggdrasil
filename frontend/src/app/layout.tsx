@@ -17,7 +17,7 @@ export default function RootLayout({
         <html lang='en'>
             <body className='flex h-screen flex-col bg-yggdrasil-950'>
                 <NavBar />
-                <div className='flex flex-col flex-1 overflow-y-auto no-scrollbar max-w-7xl mx-auto bg-yggdrasil-900'>
+                <div className='flex flex-col flex-1 overflow-y-scroll no-scrollbar max-w-7xl mx-auto bg-yggdrasil-900'>
                     <main className='flex-grow w-full py-16 '>
                         {children}
                     </main>

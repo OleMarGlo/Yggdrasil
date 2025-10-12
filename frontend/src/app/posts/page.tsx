@@ -24,7 +24,7 @@ export default async function Page() {
                 <p className='mt-1'>{mission}</p>
                 <p className='mt-3 font-semibold'>{cta}</p>
             </div>
-            <ul className='grid grid-cols-1 sm:grid-cols-2 max-w-3xl relative h-full text-center p-2 w-full'>
+            <ul className='grid grid-cols-1 sm:grid-cols-2 max-w-3xl relative h-full text-center p-2 w-full py-10'>
                 {posts.posts.map((post, index) => (
                     <li
                         key={index}

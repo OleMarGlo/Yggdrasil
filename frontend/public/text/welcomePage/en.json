@@ -2,7 +2,7 @@
     "intro": {
         "headline": "Welcome to My Portfolio",
         "subheadline": "Developer • Problem Solver • Tech Enthusiast",
-        "about": "Hi, I’m Ole, a developer passionate about building creative solutions with code. I enjoy working with web technologies, building API's, exploring system design, and learning new programming languages.",
+        "about": "Hi, I’m Ole, a developer passionate about building creative solutions with code. I enjoy working with web technologies, building API's, exploring system design, and learning new programming languages. For more information on projects, hobbies or just my general interests, please check out Posts. If you wish to check out my skills summarized go have a look in Skills. Finally if you wish to know more about me head on over to About.",
         "mission": "This website is a space where I share my projects, experiments, and thoughts on technology. My goal is to keep learning, improving, and contributing to meaningful software.",
         "cta": "Feel free to check out my work, read about my journey, and connect with me!"
     }
