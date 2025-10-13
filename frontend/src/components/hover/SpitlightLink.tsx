@@ -30,9 +30,12 @@ export default function SpotlightLink({ href, children }: SpotlightLinkProps) {
             onMouseMove={handleMouseMove}
             style={{
                 background: hovering
-                    ? `radial-gradient(circle 60px at ${bgPosition.x}px ${bgPosition.y}px, var(--color-yggdrasil-400), transparent 80%)`
+                    ? `radial-gradient(circle 80px at ${bgPosition.x}px ${bgPosition.y}px, var(--color-yggdrasil-400), transparent 80%)`
                     : 'transparent',
-                transition: 'background 0.2s',
+                transform: hovering
+                    ? `perspective(400px) rotateX(${(bgPosition.y - 25) / 30}deg) rotateY(${-(bgPosition.x - 50) / 30}deg)`
+                    : 'none',
+                transition: 'transform 0.1s ease, background 0.2s ease',
             }}
         >
             {children}
