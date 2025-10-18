@@ -27,6 +27,7 @@ pub async fn get_posts(
         search,
         categories
     ).await?;
+    println!("{:?}", posts);
     Ok(format_post_response_many(posts))
 }
 

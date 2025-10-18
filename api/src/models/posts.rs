@@ -9,6 +9,7 @@ pub struct PostModel {
     pub category: String,
     pub created_at: Option<chrono::DateTime<chrono::Utc>>,
     pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
+    pub total_count: i64
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::FromRow)]

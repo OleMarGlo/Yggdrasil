@@ -25,13 +25,17 @@ pub fn format_post_response_one(post: PostModel) -> Json<serde_json::Value> {
 }
 
 pub fn format_post_response_many(posts: Vec<PostModel>) -> Json<serde_json::Value> {
+    let total = posts.first()
+        .map(|p| p.total_count).unwrap_or(0);
+    
     let post_response = posts
         .into_iter()
         .map(| post: PostModel | to_post_response(&post))
         .collect::<Vec<PostModelResponse>>();
 
+
     let json_response = serde_json::json!({
-        "count": post_response.len(),
+        "total_count": total,
         "posts": post_response
     });
     Json(json_response)

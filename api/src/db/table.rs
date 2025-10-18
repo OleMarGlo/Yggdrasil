@@ -30,7 +30,8 @@ pub fn fetch_all(table: Table, order_by: Option<&str>, sort_by: Option<&str>) ->
         r#"SELECT 
             p.id, p.title, p.slug, 
             p.content, p.created_at, p.updated_at,
-            categories.category as category
+            categories.category as category,
+            COUNT (*) OVER() AS total_count
         FROM 
             posts AS p
         JOIN
