@@ -3,7 +3,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Deserialize, Serialize)]
 pub struct FilterOptions {
     pub page: Option<usize>,
-    pub limit: Option<usize>
+    pub limit: Option<usize>,
+    pub order_by: Option<String>,
+    pub sort: Option<String>
 }
 
 #[derive(Deserialize, Serialize)]

@@ -12,9 +12,11 @@ pub async fn get_posts(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let limit = opts.limit.unwrap_or(10);       //limit the amount fetched
     let offset = (opts.page.unwrap_or(1) - 1) * limit;          //used for paging
-    
+    let order_by = opts.order_by.unwrap_or("id".to_string());
+    let sort = opts.sort.unwrap_or("asc".to_string());
+
     // fetches posts from DB
-    let posts = get_posts_from_db(&data.db, limit as i32, offset as i32).await?;
+    let posts = get_posts_from_db(&data.db, limit as i32, offset as i32, order_by, sort).await?;
     Ok(format_post_response_many(posts))
 }
 

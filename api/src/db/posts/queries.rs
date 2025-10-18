@@ -4,11 +4,11 @@ use sqlx::{types::Json, PgPool};
 use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, get_posts_with_categorie, update_one_row, Table}, models::{post_schema::CreatePostSchema, posts::PostModel}};
 
 // executes an SQL query based on filtering and paging
-pub async fn fetch_posts(pool: &PgPool, limit: i32, offset: i32) 
+pub async fn fetch_posts(pool: &PgPool, limit: i32, offset: i32, order_by:&str, sort_by: &str) 
 -> Result<Vec<PostModel>, sqlx::Error> {
-    let sql = fetch_all(Table::Posts);
+    let sql = fetch_all(Table::Posts, std::option::Option::Some(order_by), std::option::Option::Some(sort_by));
 
-    sqlx::query_as::<_, PostModel>(sql)
+    sqlx::query_as::<_, PostModel>(&sql)
         .bind(limit)
         .bind(offset)
         .fetch_all(pool)

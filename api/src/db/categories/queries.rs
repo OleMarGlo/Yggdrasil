@@ -5,9 +5,9 @@ use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, updat
 
 pub async fn fetch_categories(pool: &PgPool) 
 -> Result<Vec<CategorieModel>, sqlx::Error> {
-    let sql = fetch_all(Table::Categories);
+    let sql = fetch_all(Table::Categories, None, None);
 
-    sqlx::query_as::<_, CategorieModel>(sql)
+    sqlx::query_as::<_, CategorieModel>(&sql)
         .fetch_all(pool)
         .await
 }

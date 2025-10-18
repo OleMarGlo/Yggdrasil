@@ -3,9 +3,30 @@ pub enum Table {
     Categories,
 }
 
-pub fn fetch_all(table: Table) -> &'static str {
+pub fn fetch_all(table: Table, order_by: Option<&str>, sort_by: Option<&str>) -> String {
+
+    let valid_direction = vec!["asc", "desc"];
+    let dir = if valid_direction.contains(&sort_by.unwrap_or("asc")) {
+        sort_by
+    } else {
+        Some("asc")
+    };
+
+    let valid_columns = match table {
+        Table::Posts => vec![
+            "id", "title", "slug", "content", "created_at", "updated_at", "category",
+        ],
+        Table::Categories => vec!["id", "category", "slug", "description"],
+    };
+
+    let column = if valid_columns.contains(&order_by.unwrap_or("id")) {
+        order_by
+    } else {
+        Some("id")
+    };
+
     match table {
-        Table::Posts => 
+        Table::Posts => format!(
         r#"SELECT 
             posts.id, posts.title, posts.slug, 
             posts.content, posts.created_at, posts.updated_at,
@@ -16,9 +37,16 @@ pub fn fetch_all(table: Table) -> &'static str {
             categories
         ON
             posts.category_id = categories.id
-        ORDER BY posts.id 
+        ORDER BY posts.{column} {direction}
         LIMIT $1 OFFSET $2;"#,
-        Table::Categories => "SELECT * FROM categories ORDER BY id",
+        column = column.unwrap_or("id"),
+        direction = dir.unwrap_or("asc")
+        ),
+        Table::Categories => format!(
+            "SELECT * FROM categories ORDER BY {column} {direction}",
+            column = column.unwrap_or("id"),
+            direction = dir.unwrap_or("asc")
+        ),
     }
 }
 

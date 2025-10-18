@@ -85,9 +85,11 @@ pub async fn get_post_from_db(
 pub async fn get_posts_from_db(
     db: &PgPool,
     limit: i32,
-    offset: i32
+    offset: i32,
+    order_by: String,
+    sort: String,
 ) -> Result<Vec<PostModel>, (StatusCode, Json<serde_json::Value>)> {
-    fetch_posts(&db, limit, offset)
+    fetch_posts(&db, limit, offset, &order_by, &sort)
         .await
         .map_err(|err| {
             let error_response = serde_json::json!({
