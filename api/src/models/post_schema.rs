@@ -5,7 +5,9 @@ pub struct FilterOptions {
     pub page: Option<usize>,
     pub limit: Option<usize>,
     pub order_by: Option<String>,
-    pub sort: Option<String>
+    pub sort: Option<String>,
+    pub search: Option<String>,
+    pub categories: Option<String>
 }
 
 #[derive(Deserialize, Serialize)]

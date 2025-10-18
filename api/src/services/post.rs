@@ -88,8 +88,15 @@ pub async fn get_posts_from_db(
     offset: i32,
     order_by: String,
     sort: String,
+    search: String,
+    categories_str: String,
 ) -> Result<Vec<PostModel>, (StatusCode, Json<serde_json::Value>)> {
-    fetch_posts(&db, limit, offset, &order_by, &sort)
+    let categories = categories_str
+        .split(",")
+        .filter_map(|s| s.trim().parse::<i32>().ok())
+        .collect::<Vec<_>>();
+
+    fetch_posts(&db, limit, offset, &order_by, &sort, &search, categories)
         .await
         .map_err(|err| {
             let error_response = serde_json::json!({

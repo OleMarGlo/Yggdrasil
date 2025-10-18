@@ -28,17 +28,26 @@ pub fn fetch_all(table: Table, order_by: Option<&str>, sort_by: Option<&str>) ->
     match table {
         Table::Posts => format!(
         r#"SELECT 
-            posts.id, posts.title, posts.slug, 
-            posts.content, posts.created_at, posts.updated_at,
+            p.id, p.title, p.slug, 
+            p.content, p.created_at, p.updated_at,
             categories.category as category
         FROM 
-            posts
+            posts AS p
         JOIN
             categories
         ON
-            posts.category_id = categories.id
-        ORDER BY posts.{column} {direction}
-        LIMIT $1 OFFSET $2;"#,
+            p.category_id = categories.id
+        WHERE 
+            (
+                $1 = ''
+                OR to_json(p)::text ILIKE '%' || $1 || '%'
+            )
+            AND (
+                cardinality($2) = 0
+                OR p.category_id = ANY($2)
+            )
+        ORDER BY p.{column} {direction}
+        LIMIT $3 OFFSET $4;"#,
         column = column.unwrap_or("id"),
         direction = dir.unwrap_or("asc")
         ),
