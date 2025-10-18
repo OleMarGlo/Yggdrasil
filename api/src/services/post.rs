@@ -19,8 +19,7 @@ fn to_post_response(post: &PostModel) ->  PostModelResponse {
 pub fn format_post_response_one(post: PostModel) -> Json<serde_json::Value> {
     let post_response = to_post_response(&post);
     let json_response = serde_json::json!({
-        "status": "ok",
-        "categorie": post_response
+        "post": post_response
     });
     Json(json_response)
 }
@@ -32,9 +31,8 @@ pub fn format_post_response_many(posts: Vec<PostModel>) -> Json<serde_json::Valu
         .collect::<Vec<PostModelResponse>>();
 
     let json_response = serde_json::json!({
-        "status": "ok",
         "count": post_response.len(),
-        "categories": post_response
+        "posts": post_response
     });
     Json(json_response)
 }

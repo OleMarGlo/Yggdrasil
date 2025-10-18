@@ -47,7 +47,6 @@ pub async fn patch_categorie_in_db(
 pub fn format_category_response_one(categorie: CategorieModel) -> Json<serde_json::Value> {
     let categorie_response = to_category_response(&categorie);
     let json_response = serde_json::json!({
-        "status": "ok",
         "categorie": categorie_response
     });
     Json(json_response)
@@ -60,7 +59,6 @@ pub fn format_category_response_many(categories: Vec<CategorieModel>) -> Json<se
         .collect::<Vec<CategorieModelResponse>>();
 
     let json_response = serde_json::json!({
-        "status": "ok",
         "count": categorie_response.len(),
         "categories": categorie_response
     });
