@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{extract::{Path, Query, State}, http::StatusCode, response::IntoResponse, Json};
 
-use crate::{db::posts::queries::create_post, functions::parse_id_handler, models::post_schema::{CreatePostSchema, FilterOptions, PatchPost}, services::post::{delete_post_from_db, format_post_response_many, format_post_response_one, get_post_from_db, get_posts_from_db, get_posts_in_categorie_from_db, patch_post_in_db}, AppState};
+use crate::{db::posts::queries::create_post, functions::parse_id_handler, models::post_schema::{CreatePostSchema, FilterOptions, PatchPost}, services::post::{delete_post_from_db, format_post_response_many, format_post_response_one, get_post_from_db, get_posts_from_db, patch_post_in_db}, AppState};
 
 
 // fetches all posts in DB
@@ -13,7 +13,7 @@ pub async fn get_posts(
     let limit = opts.limit.unwrap_or(10);       //limit the amount fetched
     let offset = (opts.page.unwrap_or(1) - 1) * limit;          //used for paging
     let order_by = opts.order_by.unwrap_or("id".to_string());
-    let sort = opts.sort.unwrap_or("asc".to_string());
+    let sort = opts.sort.unwrap_or("asc".to_string()).to_uppercase();
     let search = opts.search.unwrap_or("".to_string());
     let categories = opts.categories.unwrap_or("".to_string());
 
@@ -52,22 +52,6 @@ pub async fn post_posts(
     }
 }
 
-pub async fn get_posts_in_categorie(
-    State(data): State<Arc<AppState>>,
-    Path(id_string): Path<String>
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let id = parse_id_handler(&id_string)?;
-    let posts = get_posts_in_categorie_from_db(&data.db, id).await?;
-
-    match posts.is_empty() {
-        true => Err((StatusCode::BAD_REQUEST, Json(serde_json::json!({
-            "stauts": "error",
-            "message": "categorie is empty",
-        })))),
-        _ => Ok(format_post_response_many(posts))
-    }
-}
-
 pub async fn delete_post(
     State(data): State<Arc<AppState>>,
     Path(id_string): Path<String>
@@ -79,7 +63,7 @@ pub async fn delete_post(
 
 pub async fn patch_post(
     State(data): State<Arc<AppState>>,
-    Path(id_str): Path<String>,             // path first
+    Path(id_str): Path<String>,
     Json(payload): Json<PatchPost>, 
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let id = parse_id_handler(&id_str)?;

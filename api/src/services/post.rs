@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use sqlx::PgPool;
 
-use crate::{db::posts::queries::{delete_post_sql, fetch_post, fetch_posts, get_posts_in_categies_sql, update_post}, models::{post_schema::PatchPost, posts::{PostModel, PostModelResponse}}};
+use crate::{db::posts::queries::{delete_post_sql, fetch_post, fetch_posts, update_post}, models::{post_schema::PatchPost, posts::{PostModel, PostModelResponse}}};
 
 // used to map from a PostModel in DB to a response
 fn to_post_response(post: &PostModel) ->  PostModelResponse {
@@ -39,21 +39,6 @@ pub fn format_post_response_many(posts: Vec<PostModel>) -> Json<serde_json::Valu
         "posts": post_response
     });
     Json(json_response)
-}
-
-pub async  fn get_posts_in_categorie_from_db(
-    db: &PgPool,
-    id: i32,
-) -> Result<Vec<PostModel>, (StatusCode, Json<serde_json::Value>)> {
-    get_posts_in_categies_sql(&db, id)
-        .await
-        .map_err(|err| {
-            let error_response = serde_json::json!({
-                "status": "error",
-                "message": format!("unable to load posts from db, err: {}", err),
-            });
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
-        })
 }
 
 pub async fn delete_post_from_db(
