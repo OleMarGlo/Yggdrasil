@@ -1,7 +1,7 @@
 use axum::{http::StatusCode, Json};
 use sqlx::{PgPool};
 
-use crate::{db::categories::queries::{delete_categorie, fetch_categories, fetch_one_categorie, update_row}, models::{categorie_schema::PatchCategorie, categories::{CategorieModel, CategorieModelResponse}}};
+use crate::{db::categories::queries::{delete_categorie, fetch_all_active_categories, fetch_categories, fetch_one_categorie, update_row}, models::{categorie_schema::PatchCategorie, categories::{CategorieModel, CategorieModelResponse}}};
 
 
 fn to_category_response(cat: &CategorieModel) -> CategorieModelResponse {
@@ -91,5 +91,19 @@ pub async fn fetch_many_categories_from_db(
                 "message": format!("Database error: {}", err)
             });
             (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+        })
+}
+
+pub async fn fetch_active_categories_from_db(
+    db: &PgPool,
+) -> Result<Vec<CategorieModel>, (StatusCode, Json<serde_json::Value>)> {
+    fetch_all_active_categories(db)
+        .await
+        .map_err(|err| {
+            let error_respose = serde_json::json!({
+                "status": "error",
+                "message": format!("Database error: {}", err)
+            });
+            (StatusCode::INTERNAL_SERVER_ERROR, Json(error_respose))
         })
 }

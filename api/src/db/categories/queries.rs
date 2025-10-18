@@ -1,13 +1,22 @@
 use axum::http::StatusCode;
 use sqlx::{types::Json, PgPool};
 
-use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, update_one_row, Table}, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
+use crate::{db::table::{add_one_row, delete_row, fetch_all, fetch_one_row, get_active_categories, update_one_row, Table}, models::{categorie_schema::CreateCategorieSchema, categories::CategorieModel}};
 
 pub async fn fetch_categories(pool: &PgPool) 
 -> Result<Vec<CategorieModel>, sqlx::Error> {
     let sql = fetch_all(Table::Categories, None, None);
 
     sqlx::query_as::<_, CategorieModel>(&sql)
+        .fetch_all(pool)
+        .await
+}
+
+pub async fn fetch_all_active_categories(pool: &PgPool)
+-> Result<Vec<CategorieModel>, sqlx::Error> {
+    let sql = get_active_categories(Table::Categories);
+
+    sqlx::query_as::<_, CategorieModel>(sql)
         .fetch_all(pool)
         .await
 }

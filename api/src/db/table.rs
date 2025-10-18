@@ -5,11 +5,12 @@ pub enum Table {
 
 pub fn fetch_all(table: Table, order_by: Option<&str>, sort_by: Option<&str>) -> String {
 
-    let valid_direction = vec!["asc", "desc"];
-    let dir = if valid_direction.contains(&sort_by.unwrap_or("asc")) {
+    let valid_direction = vec!["ASC", "DESC"];
+
+    let direction = if valid_direction.contains(&sort_by.unwrap_or("ASC")) {
         sort_by
     } else {
-        Some("asc")
+        Some("ASC")
     };
 
     let valid_columns = match table {
@@ -50,15 +51,15 @@ pub fn fetch_all(table: Table, order_by: Option<&str>, sort_by: Option<&str>) ->
         ORDER BY p.{column} {direction}
         LIMIT $3 OFFSET $4;"#,
         column = column.unwrap_or("id"),
-        direction = dir.unwrap_or("asc")
+        direction = direction.unwrap_or("ASC")
         ),
-        Table::Categories => format!(
-            "SELECT * FROM categories ORDER BY {column} {direction}",
-            column = column.unwrap_or("id"),
-            direction = dir.unwrap_or("asc")
-        ),
+            Table::Categories => format!(
+                "SELECT * FROM categories ORDER BY {column} {direction}",
+                column = column.unwrap_or("id"),
+                direction = direction.unwrap_or("ASC")
+            ),
+        }
     }
-}
 
 pub fn fetch_one_row(table: Table) -> &'static str {
     match table {
@@ -147,5 +148,16 @@ pub fn update_one_row(table: Table) -> &'static str {
             WHERE id = $4
             RETURNING *;
         "#,
+    }
+}
+
+pub fn get_active_categories(table: Table) -> &'static str {
+    match table {
+        Table::Posts => unimplemented!("Unimplemented"),
+        Table::Categories => r#"
+            SELECT *
+            FROM categories AS c
+            LEFT JOIN posts ON c.id = posts.id;
+        "#
     }
 }

@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{extract::{Path, State}, http::StatusCode, response::IntoResponse, Json};
 
-use crate::{db::categories::queries::create_categorie, functions::parse_id_handler, models::categorie_schema::{CreateCategorieSchema, PatchCategorie}, services::categorie::{delete_category_from_db, fetch_many_categories_from_db, fetch_one_categorie_from_db, format_category_response_many, format_category_response_one, patch_categorie_in_db}, AppState};
+use crate::{db::categories::queries::create_categorie, functions::parse_id_handler, models::categorie_schema::{CreateCategorieSchema, PatchCategorie}, services::categorie::{delete_category_from_db, fetch_active_categories_from_db, fetch_many_categories_from_db, fetch_one_categorie_from_db, format_category_response_many, format_category_response_one, patch_categorie_in_db}, AppState};
 
 
 
@@ -10,6 +10,13 @@ pub async fn get_categories(
     State(data): State<Arc<AppState>>
 ) -> Result<impl IntoResponse,(StatusCode, Json<serde_json::Value>)> {
     let categories = fetch_many_categories_from_db(&data.db).await?;
+    Ok(format_category_response_many(categories))
+}
+
+pub async fn get_categories_active(
+    State(data): State<Arc<AppState>>
+) -> Result<impl IntoResponse,(StatusCode, Json<serde_json::Value>)> {
+    let categories = fetch_active_categories_from_db(&data.db).await?;
     Ok(format_category_response_many(categories))
 }
 

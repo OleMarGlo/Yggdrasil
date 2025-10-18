@@ -7,15 +7,14 @@ use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 use tower_http::trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer};
 
-use crate::handlers::categories::{del_categorie, get_categories, get_one_categorie, patch_categorie_handler, post_categorie};
+use crate::handlers::categories::{del_categorie, get_categories, get_categories_active, get_one_categorie, patch_categorie_handler, post_categorie};
 use crate::handlers::posts::{delete_post, get_post, get_posts, patch_post, post_posts};
 use crate::{consts, AppState};
 
 pub fn create_router(app_state: Arc<AppState>) -> Router {
     let cors = CorsLayer::new()
         .allow_origin(Any)
-        .allow_methods([Method::GET, Method::POST, Method::OPTIONS]);
-
+        .allow_methods([Method::GET, Method::POST, Method::OPTIONS, Method::PATCH]);
 
     Router::new()
         .route(
@@ -38,6 +37,8 @@ pub fn create_router(app_state: Arc<AppState>) -> Router {
             .delete(del_categorie)
             .patch(patch_categorie_handler)
         )
+        .route(&format!("{}/categories/active", consts::VERSION),
+            get(get_categories_active))
         .with_state(app_state)
         .layer (
             ServiceBuilder::new()
