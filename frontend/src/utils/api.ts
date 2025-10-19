@@ -32,6 +32,11 @@ export async function getCategories(): Promise<GetCategoriesProps | string> {
     return await getWrapper({ path })
 }
 
+export async function getActiveCategories(): Promise<GetCategoriesProps | string> {
+    const path = `${baseUrl+config.yggdrasilApi.CATEGORIES_PATH}/active`
+    return await getWrapper({ path })
+}
+
 async function getWrapper({ path, options = {} }: GetWrapperProps) {
     const baseHeaders = {
         'Content-Type': 'application/json',
@@ -47,7 +52,7 @@ async function getWrapper({ path, options = {} }: GetWrapperProps) {
         }
         const data = await response.json()
         return data
-        // esling-disable-next-line
+        // eslint-disable-next-line
     } catch (error: any) {
         console.log(error)
         return (

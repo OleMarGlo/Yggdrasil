@@ -11,13 +11,15 @@ type SpotlightLinkProps = {
 
 export default function SpotlightLink({ href, children }: SpotlightLinkProps) {
     const [hovering, setHovering] = useState(false)
-    const [bgPosition, setBgPosition] = useState({ x: 0, y: 0 })
+    const [bgPosition, setBgPosition] = useState({ x: 0, y: 0, width: 0, height: 0 })
 
     const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         const rect = e.currentTarget.getBoundingClientRect()
         setBgPosition({
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
+            width: rect.width,
+            height: rect.height,
         })
     }
 
@@ -33,7 +35,8 @@ export default function SpotlightLink({ href, children }: SpotlightLinkProps) {
                     ? `radial-gradient(circle 80px at ${bgPosition.x}px ${bgPosition.y}px, var(--color-yggdrasil-400), transparent 80%)`
                     : 'transparent',
                 transform: hovering
-                    ? `perspective(400px) rotateX(${(bgPosition.y - 25) / 30}deg) rotateY(${-(bgPosition.x - 50) / 30}deg)`
+                    ? `perspective(400px) rotateX(${((bgPosition.y - bgPosition.height / 2) / 20).toFixed(2)}deg) 
+                        rotateY(${(-(bgPosition.x - bgPosition.width / 2) / 20).toFixed(2)}deg)`
                     : 'none',
                 transition: 'transform 0.1s ease, background 0.2s ease',
             }}
